@@ -1,0 +1,132 @@
+// SCSS-Variablen - Flashcard-App Design
+
+// Glassmorphismu-Farben 
+$color-deep-sky-blue: #00BFFF; 
+$color-light-sky-blue: #87CEFA; 
+$color-cadet-blue: #5F9EA0;
+$color-light-blue: #ADD8E6; 
+
+// Ordner Farben 
+$color-cyan3: #00CDCD; 
+$color-meerblau: #006994; 
+$color-aquamarine3: #66CDAA; 
+$color-violet-red: #FF3E96; 
+$color-medium-orchid: #BA55D3; 
+$color-lavender-blush: #FFF0F5; 
+$color-indian-red: #FF6A6A; 
+$color-spring-green: #458B00; 
+
+// Schriftfarben für Notizen
+$color-grey34: #575757; 
+$color-slate-grey: #708090; 
+$color-navy: #000080;
+$color-cyan4: #008B8B; 
+$color-burlywood: #FFD39B; 
+$color-turquoise: #00F5FF; 
+$color-deep-pink: #CD1076; 
+$color-firebrick: #CD2626; 
+$color-light-sea-green: #20B2AA; 
+
+// Abstände
+$spacing-xs: 0.25rem; 
+$spacing-sm: 0.5rem;
+$spacing-md: 1rem; 
+$spacing-lg: 1.5rem; 
+$spacing-xl: 2rem; 
+$spacing-2xl: 3rem; 
+
+// Border-Radius
+$radius-sm: 8px;
+$radius-md: 16px; 
+$radius-lg: 24px; 
+$radius-xl: 32px; 
+$radius-full: 9999px; 
+
+// Glassmorphismus-Werte
+$glass-blur: blur(16px);
+$glass-blur-strong: blur(24px);
+$glass-border: 1px solid rgba(255, 255, 255, 0.2);
+$glass-border-strong: 1px solid rgba(255, 255, 255, 0.35);
+
+// Schatten
+$shadow-glass: 0 8px 32px rgba(0, 0, 0, 0.25);
+$shadow-card: 0 4px 16px rgba(0, 0, 0, 0.2);
+$shadow-neumorphism-light: 6px 6px 12px #b8bec7, -6px -6px 12px #ffffff;
+$shadow-neumorphism-dark: 6px 6px 12px rgba(0, 0, 0, 0.4), -6px -6px 12px rgba(255, 255, 255, 0.05);
+
+
+// Transitions
+$transition-base: all 0.3s ease; 
+$transition-fast: all 0.15s ease; 
+$transition-slow: all 0.5s ease;
+
+// Hintergrundfarben
+$bg-light: #f0f4f8; 
+$bg-secondary-light: #e2e8f0; 
+$bg-dark: #0f172a; 
+$bg-secondary-dark: #1e293b; 
+$neu-bg-light: #e8ecf0;
+$neu-bg-dark: #1e293b; 
+
+// Textfarben
+$text-light: #1a202c; 
+$text-secondary-light: #4a5568; 
+$text-muted-light: #718096; 
+$text-dark: #f1f5f9; 
+$text-secondary-dark: #cbd5e1; 
+$text-muted-dark: #94a3b8; 
+
+// Glas-Hintergründe Light
+$glass-bg-light: rgba(255, 255, 255, 0.2);
+$glass-bg-strong-light: rgba(255, 255, 255, 0.35); 
+$glass-border-light: rgba(255, 255, 255, 0.3);
+$glass-shadow-light: 0 8px 32px rgba(0, 0, 0, 0.15);
+$glass-bg-page-light: rgba(255, 255, 255, 0.25);
+
+// Glas-Hintergründe Dark
+$glass-bg-dark: rgba(255, 255, 255, 0.08);
+$glass-bg-strong-dark: rgba(255, 255, 255, 0.15);
+$glass-border-dark: rgba(255, 255, 255, 0.12);
+$glass-shadow-dark: 0 8px 32px rgba(0, 0, 0, 0.4);
+$glass-bg-page-dark: rgba(15, 23, 42, 0.4); 
+
+// Status
+$color-success-light: #48bb78; 
+$color-success-dark: #68d391; 
+$color-error: #fc8181; 
+$color-warning: #f6ad55; 
+
+// Antwort-Markierung
+$color-answer-correct: #00BFFF; 
+$color-answer-wrong-light: #CD1076; 
+$color-answer-wrong-dark: #FF1493;
+
+// Neumorphismus Active-State
+$neu-shadow-active: inset 3px 3px 6px rgba(0, 0, 0, 0.2),
+                    inset -3px -3px 6px rgba(255, 255, 255, 0.1);
+
+// Neumorphismus Schatten 
+$neu-shadow-light: $shadow-neumorphism-light; 
+$neu-shadow-dark: $shadow-neumorphism-dark;
+
+// Typografie-Variablen
+$font-size-xs: 0.75rem;
+$font-size-sm: 0.875rem;
+$font-size-md: 1rem;
+$font-size-lg: 1.125rem;
+$font-size-xl: 1.25rem;
+$font-size-2xl: 1.5rem;
+$font-size-3xl: 2rem;
+$font-size-4xl: 2.5rem;
+
+$font-weight-light: 300;
+$font-weight-regular: 400;
+$font-weight-medium: 500;
+$font-weight-semibold: 600;
+$font-weight-bold: 700;
+
+$line-height-tight: 1.2;
+$line-height-base: 1.5;
+$line-height-relaxed: 1.75;
+
+

@@ -1,0 +1,63 @@
+@use './variables' as *; 
+
+// Dark-und Lightmode - CSS Variablen 
+
+// Lightmode
+:root {
+    --color-bg: #{$bg-light};
+    --color-bg-secondary: #{$bg-secondary-light};
+    --color-bg-glass: #{$glass-bg-page-light};
+
+    --color-text: #{$text-light}; 
+    --color-text-secondary: #{$text-secondary-light}; 
+    --color-text-muted: #{$text-muted-light};
+
+    --color-primary: #{$color-deep-sky-blue};
+    --color-primary-soft: #{$color-light-sky-blue};
+    --color-secondary: #{$color-cadet-blue};
+
+    --glass-bg: #{$glass-bg-light};
+    --glass-bg-strong: #{$glass-bg-strong-light};
+    --glass-border: #{$glass-border-light};
+    --glass-shadow: #{$glass-shadow-light}; 
+
+    --neu-bg: #{$neu-bg-light}; 
+    --neu-shadow: #{$neu-shadow-light};
+
+    --color-success: #{$color-success-light}; 
+    --color-error: #{$color-error};
+    --color-warning: #{$color-warning};
+
+    --color-answer-correct: #{$color-answer-correct};
+    --color-answer-wrong: #{$color-answer-wrong-light};
+}
+
+// Dark-Mode
+:root.dark {
+    --color-bg: #{$bg-dark}; 
+    --color-bg-secondary: #{$bg-secondary-dark}; 
+    --color-bg-glass: #{$glass-bg-page-dark};
+
+    --color-text: #{$text-dark}; 
+    --color-text-secondary: #{$text-secondary-dark}; 
+    --color-text-muted: #{$text-muted-dark};
+
+    --color-primary: #{$color-deep-sky-blue}; 
+    --color-primary-soft: #{$color-light-sky-blue};
+    --color-secondary: #{$color-cadet-blue};
+
+    --glass-bg: #{$glass-bg-dark};
+    --glass-bg-strong: #{$glass-bg-strong-dark};
+    --glass-border: #{$glass-border-dark};
+    --glass-shadow: #{$glass-shadow-dark};
+
+    --neu-bg: #{$neu-bg-dark}; 
+    --neu-shadow: #{$neu-shadow-dark};
+
+    --color-success: #{$color-success-dark};
+    --color-error: #{$color-error}; 
+    --color-warning: #{$color-warning}; 
+
+    --color-answer-correct: #{$color-answer-correct};
+    --color-answer-wrong: #{$color-answer-wrong-dark};
+}

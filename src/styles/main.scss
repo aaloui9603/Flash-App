@@ -1,0 +1,53 @@
+@use './variables' as *; 
+@use './dark-light'; 
+@use './glassmorphism'; 
+@use './typography'; 
+
+
+// Globale Basis-Styles 
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0; 
+    padding: 0;
+}
+
+html {
+    font-size: 16px; 
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: 'AmyraFont', sans-serif; 
+    background-color: var(--color-bg);
+    color: var(--color-text);
+    line-height: $line-height-base; 
+    min-height: 100vh; 
+    transition: $transition-base; 
+}
+
+a {
+    color: var(--color-primary);
+    text-decoration: none; 
+    transition: $transition-fast; 
+
+    &:hover {
+        color: var(--color-primary-soft);
+    }
+}
+
+button {
+    cursor: pointer;
+    font-family: inherit;
+}
+
+img {
+    max-width: 100%; 
+    display: block; 
+}
+
+ul {
+    list-style: none; 
+}
