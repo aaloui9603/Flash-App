@@ -61,3 +61,56 @@
     --color-answer-correct: #{$color-answer-correct};
     --color-answer-wrong: #{$color-answer-wrong-dark};
 }
+
+// Abstände
+:root{
+--spacing-xs: #{$spacing-xs}; 
+--spacing-sm: #{$spacing-sm}; 
+--spacing-md: #{$spacing-md};
+--spacing-lg: #{$spacing-lg}; 
+--spacing-xl: #{$spacing-xl}; 
+--spacing-2xl: #{$spacing-2xl}; 
+
+// Border-Radius
+--radius-sm: #{$radius-sm}; 
+--radius-md: #{$radius-md}; 
+--radius-lg: #{$radius-lg}; 
+--radius-xl: #{$radius-xl};
+
+// Transitions
+--transition-base: #{$transition-base}; 
+--transition-fast: #{$transition-fast}; 
+--transition-slow: #{$transition-slow};
+}
+
+// Größen 
+:root {
+--font-size-xs: #{$font-size-xs};
+--font-size-sm: #{$font-size-sm};
+--font-size-md: #{$font-size-md};
+--font-size-lg: #{$font-size-lg};
+--font-size-xl: #{$font-size-xl};
+--font-size-2xl: #{$font-size-2xl};
+--font-size-3xl: #{$font-size-3xl};
+--font-size-4xl: #{$font-size-4xl};
+}
+
+// Toggle 
+:root {
+--toggle-size: #{$toggle-size}; 
+--border-width-thin: #{$border-width-thin};
+}
+
+// Z-Index 
+:root {
+    --z-navbar: #{$z-navbar};
+    --z-modal: #{$z-modal};
+    --z-tooltip: #{$z-tooltip};
+}
+
+// Font-Weight
+:root {
+    --font-weight-medium: #{$font-weight-medium};
+    --font-weight-semibold: #{$font-weight-semibold};
+    --font-weight-bold: #{$font-weight-bold};
+}

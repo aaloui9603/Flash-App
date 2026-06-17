@@ -1,38 +1,30 @@
 <script setup>
 import { RouterView } from 'vue-router'
 import { useDark } from '@vueuse/core'
+import AppNavbar from './components/ui/AppNavbar.vue'
 
-//Dark Mode 
 const isDark = useDark()
 </script>
 
 <template>
-  <div id="app-wrapper">
-
-
-    <!--App-Header-->
-
+  <div class="app-wrapper">
+    <AppNavbar />
     <main class="app-main">
       <RouterView />
     </main>
-
-
-    <!--App-Footer-->
-
-    <!--BlueBooster Chatbot-->
-
   </div>
 </template>
 
 <style scoped>
 .app-wrapper {
-  min-height: 100vh; 
+  min-height: 100vh;
   background-color: var(--color-bg);
   color: var(--color-text);
-  transition: background-color 0.3s ease, color 0.3s ease;
+  transition: var(--transition-base);
 }
 
 .app-main {
-  flex: 1; 
+  flex: 1;
+  padding: var(--spacing-xl);
 }
 </style>
