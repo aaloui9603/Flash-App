@@ -13,7 +13,6 @@ onMounted(async () => {
   await flashcardStore.ladeFlashcards()
 })
 
-// Alle einzigartigen Kategorien
 const kategorien = computed(() => {
   const alle = flashcardStore.flashcards
     .map(f => f.kategorie)
@@ -21,7 +20,6 @@ const kategorien = computed(() => {
   return [...new Set(alle)]
 })
 
-// Gefilterte Flashcards
 const gefilterteFlashcards = computed(() => {
   return flashcardStore.flashcards.filter(f => {
     const suchTreffer = f.frage.toLowerCase().includes(suchbegriff.value.toLowerCase()) ||
@@ -48,7 +46,12 @@ async function loeschen(id) {
 <template>
   <div class="library">
 
-    <h1 class="library__title">📚 Bibliothek</h1>
+    <div class="library__header">
+      <h1 class="library__title">📚 Bibliothek</h1>
+      <RouterLink to="/learn" class="library__learn-btn neu-button">
+        🎓 Lern-Modus aktivieren
+      </RouterLink>
+    </div>
 
     <div class="library__layout">
 
@@ -58,16 +61,13 @@ async function loeschen(id) {
 
       <main class="library__content">
 
-        <!-- Suche + Filter -->
         <div class="library__toolbar glass">
-
           <input
             v-model="suchbegriff"
             class="library__search"
             placeholder="🔍 Flashcards durchsuchen..."
             type="text"
           />
-
           <div class="library__filter">
             <button
               class="library__filter-btn neu-button"
@@ -86,15 +86,12 @@ async function loeschen(id) {
               {{ kategorie }}
             </button>
           </div>
-
         </div>
 
-        <!-- Ergebnis-Info -->
         <p class="library__count">
           {{ gefilterteFlashcards.length }} von {{ flashcardStore.flashcards.length }} Karten
         </p>
 
-        <!-- Flashcard Liste -->
         <p v-if="flashcardStore.isLoading" class="library__loading">
           Lädt...
         </p>
@@ -117,10 +114,30 @@ async function loeschen(id) {
   gap: var(--spacing-xl);
 }
 
+.library__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
 .library__title {
   font-size: var(--font-size-3xl);
   font-weight: var(--font-weight-bold);
   color: var(--color-text);
+}
+
+.library__learn-btn {
+  padding: var(--spacing-sm) var(--spacing-lg);
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-primary);
+  border-radius: var(--radius-md);
+  transition: var(--transition-fast);
+  text-decoration: none;
+}
+
+.library__learn-btn:hover {
+  background: var(--glass-bg-strong);
 }
 
 .library__layout {

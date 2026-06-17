@@ -3,6 +3,7 @@ import HomeView from '../views/HomeView.vue'
 import LibraryView from '../views/LibraryView.vue'
 import StatisticsView from '../views/StatisticsView.vue'
 import NotesView from '../views/NotesView.vue'
+import LearnView from '../views/LearnView.vue'
 
 const routes = [
     {
@@ -24,6 +25,11 @@ const routes = [
         path: '/notes',
         name: 'Notes',
         component: NotesView
+    },
+    {
+        path: '/learn',
+        name: 'Learn',
+        component: LearnView
     }
 ]
 
