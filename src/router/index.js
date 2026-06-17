@@ -4,6 +4,7 @@ import LibraryView from '../views/LibraryView.vue'
 import StatisticsView from '../views/StatisticsView.vue'
 import NotesView from '../views/NotesView.vue'
 import LearnView from '../views/LearnView.vue'
+import QuestionView from '../views/QuestionView.vue'
 
 const routes = [
     {
@@ -30,6 +31,11 @@ const routes = [
         path: '/learn',
         name: 'Learn',
         component: LearnView
+    },
+    {
+        path: '/questions',
+        name: 'Questions',
+        component: QuestionView
     }
 ]
 
