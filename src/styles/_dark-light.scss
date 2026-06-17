@@ -114,3 +114,16 @@
     --font-weight-semibold: #{$font-weight-semibold};
     --font-weight-bold: #{$font-weight-bold};
 }
+
+// Flashcard
+:root {
+    --card-perspective: #{$card-perspective};
+    --card-height: #{$card-height};
+    --transition-flip: #{$transition-flip}; 
+    --letter-spacing-wide: #{$letter-spacing-wide};
+}
+
+// Opacity
+:root{
+--opacity-disabled: #{$opacity-disabled};
+}
