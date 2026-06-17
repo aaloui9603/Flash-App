@@ -9,10 +9,10 @@ const toggleDark = useToggle(isDark)
 </script>
 <template>
     <nav class="navbar glass">
-        <div class="navbar__logo">
-            <span class="navbar__logo-text">Flashcard</span>
-            <span class="navbar__logo-accent">App</span>
-        </div>
+        <RouterLink to="/" class="navbar__logo">
+            <span class="navbar__logo-text">Flash</span>
+            <span class="navbar__logo-accent">back</span>
+        </RouterLink>
 
         <ul class="navbar__links">
             <li>
@@ -133,5 +133,20 @@ const toggleDark = useToggle(isDark)
 .navbar__toggle:hover {
     background: var(--glass-bg-strong);
 }
+.navbar__logo {
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-bold);
+  text-decoration: none;
+  cursor: pointer;
+  transition: var(--transition-fast);
+}
 
+.navbar__logo:hover {
+  opacity: var(--opacity-hover);
+  transform: scale(1.02);
+}
+
+.navbar__logo:active {
+  transform: scale(0.97);
+}
 </style>

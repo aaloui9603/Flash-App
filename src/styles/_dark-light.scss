@@ -1,129 +1,171 @@
-@use './variables' as *; 
+@use './variables' as *;
 
-// Dark-und Lightmode - CSS Variablen 
+// ============================================
+// Dark / Light Mode — CSS Variablen
+// ============================================
 
-// Lightmode
+// --- Light Mode ---
 :root {
-    --color-bg: #{$bg-light};
-    --color-bg-secondary: #{$bg-secondary-light};
-    --color-bg-glass: #{$glass-bg-page-light};
+  --color-bg: #{$bg-light};
+  --color-bg-secondary: #{$bg-secondary-light};
+  --color-bg-glass: #{$glass-bg-page-light};
 
-    --color-text: #{$text-light}; 
-    --color-text-secondary: #{$text-secondary-light}; 
-    --color-text-muted: #{$text-muted-light};
+  --color-text: #{$text-light};
+  --color-text-secondary: #{$text-secondary-light};
+  --color-text-muted: #{$text-muted-light};
 
-    --color-primary: #{$color-deep-sky-blue};
-    --color-primary-soft: #{$color-light-sky-blue};
-    --color-secondary: #{$color-cadet-blue};
+  --color-primary: #{$color-deep-sky-blue};
+  --color-primary-soft: #{$color-light-sky-blue};
+  --color-secondary: #{$color-cadet-blue};
 
-    --glass-bg: #{$glass-bg-light};
-    --glass-bg-strong: #{$glass-bg-strong-light};
-    --glass-border: #{$glass-border-light};
-    --glass-shadow: #{$glass-shadow-light}; 
+  --glass-bg: #{$glass-bg-light};
+  --glass-bg-strong: #{$glass-bg-strong-light};
+  --glass-border: #{$glass-border-light};
+  --glass-shadow: #{$glass-shadow-light};
 
-    --neu-bg: #{$neu-bg-light}; 
-    --neu-shadow: #{$neu-shadow-light};
+  --neu-bg: #{$neu-bg-light};
+  --neu-shadow: #{$neu-shadow-light};
 
-    --color-success: #{$color-success-light}; 
-    --color-error: #{$color-error};
-    --color-warning: #{$color-warning};
+  --color-success: #{$color-success-light};
+  --color-error: #{$color-error};
+  --color-warning: #{$color-warning};
 
-    --color-answer-correct: #{$color-answer-correct};
-    --color-answer-wrong: #{$color-answer-wrong-light};
+  --color-answer-correct: #{$color-answer-correct};
+  --color-answer-wrong: #{$color-answer-wrong-light};
 }
 
-// Dark-Mode
+// --- Dark Mode ---
 :root.dark {
-    --color-bg: #{$bg-dark}; 
-    --color-bg-secondary: #{$bg-secondary-dark}; 
-    --color-bg-glass: #{$glass-bg-page-dark};
+  --color-bg: #{$bg-dark};
+  --color-bg-secondary: #{$bg-secondary-dark};
+  --color-bg-glass: #{$glass-bg-page-dark};
 
-    --color-text: #{$text-dark}; 
-    --color-text-secondary: #{$text-secondary-dark}; 
-    --color-text-muted: #{$text-muted-dark};
+  --color-text: #{$text-dark};
+  --color-text-secondary: #{$text-secondary-dark};
+  --color-text-muted: #{$text-muted-dark};
 
-    --color-primary: #{$color-deep-sky-blue}; 
-    --color-primary-soft: #{$color-light-sky-blue};
-    --color-secondary: #{$color-cadet-blue};
+  --color-primary: #{$color-deep-sky-blue};
+  --color-primary-soft: #{$color-light-sky-blue};
+  --color-secondary: #{$color-cadet-blue};
 
-    --glass-bg: #{$glass-bg-dark};
-    --glass-bg-strong: #{$glass-bg-strong-dark};
-    --glass-border: #{$glass-border-dark};
-    --glass-shadow: #{$glass-shadow-dark};
+  --glass-bg: #{$glass-bg-dark};
+  --glass-bg-strong: #{$glass-bg-strong-dark};
+  --glass-border: #{$glass-border-dark};
+  --glass-shadow: #{$glass-shadow-dark};
 
-    --neu-bg: #{$neu-bg-dark}; 
-    --neu-shadow: #{$neu-shadow-dark};
+  --neu-bg: #{$neu-bg-dark};
+  --neu-shadow: #{$neu-shadow-dark};
 
-    --color-success: #{$color-success-dark};
-    --color-error: #{$color-error}; 
-    --color-warning: #{$color-warning}; 
+  --color-success: #{$color-success-dark};
+  --color-error: #{$color-error};
+  --color-warning: #{$color-warning};
 
-    --color-answer-correct: #{$color-answer-correct};
-    --color-answer-wrong: #{$color-answer-wrong-dark};
+  --color-answer-correct: #{$color-answer-correct};
+  --color-answer-wrong: #{$color-answer-wrong-dark};
 }
 
-// Abstände
-:root{
---spacing-xs: #{$spacing-xs}; 
---spacing-sm: #{$spacing-sm}; 
---spacing-md: #{$spacing-md};
---spacing-lg: #{$spacing-lg}; 
---spacing-xl: #{$spacing-xl}; 
---spacing-2xl: #{$spacing-2xl}; 
-
-// Border-Radius
---radius-sm: #{$radius-sm}; 
---radius-md: #{$radius-md}; 
---radius-lg: #{$radius-lg}; 
---radius-xl: #{$radius-xl};
-
-// Transitions
---transition-base: #{$transition-base}; 
---transition-fast: #{$transition-fast}; 
---transition-slow: #{$transition-slow};
-}
-
-// Größen 
+// --- Abstände ---
 :root {
---font-size-xs: #{$font-size-xs};
---font-size-sm: #{$font-size-sm};
---font-size-md: #{$font-size-md};
---font-size-lg: #{$font-size-lg};
---font-size-xl: #{$font-size-xl};
---font-size-2xl: #{$font-size-2xl};
---font-size-3xl: #{$font-size-3xl};
---font-size-4xl: #{$font-size-4xl};
+  --spacing-xs: #{$spacing-xs};
+  --spacing-sm: #{$spacing-sm};
+  --spacing-md: #{$spacing-md};
+  --spacing-lg: #{$spacing-lg};
+  --spacing-xl: #{$spacing-xl};
+  --spacing-2xl: #{$spacing-2xl};
 }
 
-// Toggle 
+// --- Border-Radius ---
 :root {
---toggle-size: #{$toggle-size}; 
---border-width-thin: #{$border-width-thin};
+  --radius-sm: #{$radius-sm};
+  --radius-md: #{$radius-md};
+  --radius-lg: #{$radius-lg};
+  --radius-xl: #{$radius-xl};
+  --radius-full: #{$radius-full};
 }
 
-// Z-Index 
+// --- Transitions ---
 :root {
-    --z-navbar: #{$z-navbar};
-    --z-modal: #{$z-modal};
-    --z-tooltip: #{$z-tooltip};
+  --transition-base: #{$transition-base};
+  --transition-fast: #{$transition-fast};
+  --transition-slow: #{$transition-slow};
 }
 
-// Font-Weight
+// --- Schriftgrößen ---
 :root {
-    --font-weight-medium: #{$font-weight-medium};
-    --font-weight-semibold: #{$font-weight-semibold};
-    --font-weight-bold: #{$font-weight-bold};
+  --font-size-xs: #{$font-size-xs};
+  --font-size-sm: #{$font-size-sm};
+  --font-size-md: #{$font-size-md};
+  --font-size-lg: #{$font-size-lg};
+  --font-size-xl: #{$font-size-xl};
+  --font-size-2xl: #{$font-size-2xl};
+  --font-size-3xl: #{$font-size-3xl};
+  --font-size-4xl: #{$font-size-4xl};
 }
 
-// Flashcard
+// --- Schriftgewichte ---
 :root {
-    --card-perspective: #{$card-perspective};
-    --card-height: #{$card-height};
-    --transition-flip: #{$transition-flip}; 
-    --letter-spacing-wide: #{$letter-spacing-wide};
+  --font-weight-medium: #{$font-weight-medium};
+  --font-weight-semibold: #{$font-weight-semibold};
+  --font-weight-bold: #{$font-weight-bold};
 }
 
-// Opacity
-:root{
---opacity-disabled: #{$opacity-disabled};
+// --- Zeilenhöhen ---
+:root {
+  --line-height-relaxed: #{$line-height-relaxed};
+}
+
+// --- Toggle ---
+:root {
+  --toggle-size: #{$toggle-size};
+  --border-width-thin: #{$border-width-thin};
+}
+
+// --- Z-Index ---
+:root {
+  --z-navbar: #{$z-navbar};
+  --z-modal: #{$z-modal};
+  --z-tooltip: #{$z-tooltip};
+}
+
+// --- Flashcard ---
+:root {
+  --card-perspective: #{$card-perspective};
+  --card-height: #{$card-height};
+  --transition-flip: #{$transition-flip};
+  --letter-spacing-wide: #{$letter-spacing-wide};
+}
+
+// --- Opacity ---
+:root {
+  --opacity-disabled: #{$opacity-disabled};
+  --opacity-hover: #{$opacity-hover};
+}
+
+// --- Editor ---
+:root {
+  --editor-btn-min-width: #{$editor-btn-min-width};
+  --editor-divider-height: #{$editor-divider-height};
+  --editor-min-height: #{$editor-min-height};
+}
+
+// --- Marker-Farben ---
+:root {
+  --marker-gelb: #{$marker-gelb};
+  --marker-gruen: #{$marker-gruen};
+  --marker-blau: #{$marker-blau};
+  --marker-pink: #{$marker-pink};
+}
+
+// --- Schriftfarben Notizen ---
+:root {
+  --color-grey34: #{$color-grey34};
+  --color-slate-grey: #{$color-slate-grey};
+  --color-navy: #{$color-navy};
+  --color-cyan4: #{$color-cyan4};
+  --color-burlywood: #{$color-burlywood};
+  --color-turquoise: #{$color-turquoise};
+  --color-deep-pink: #{$color-deep-pink};
+  --color-firebrick: #{$color-firebrick};
+  --color-light-sea-green: #{$color-light-sea-green};
+  --color-schwarz: #{$color-schwarz};
 }
