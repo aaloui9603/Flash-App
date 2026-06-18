@@ -4,7 +4,7 @@ import tailwindcss from '@tailwindcss/vite'
 import { VitePWA } from 'vite-plugin-pwa'
 
 export default defineConfig({
-  plugins:  [
+  plugins: [
     vue(),
     tailwindcss(),
     VitePWA({
@@ -22,12 +22,18 @@ export default defineConfig({
             sizes: 'any',
             type: 'image/svg+xml'
           }
-        
         ]
       },
       workbox: {
         globPatterns: ['**/*.{js,css,html,ico,png,svg,woff,woff2,webp}']
       }
     })
-  ]
+  ],
+
+  // Proxy: leitet /api-Anfragen an lokalen Express-Server weiter
+  server: {
+    proxy: {
+      '/api': 'http://localhost:3001'
+    }
+  }
 })
