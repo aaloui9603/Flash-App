@@ -22,3 +22,8 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Umgebungsvariablen — niemals committen!
+.env
+.env.local
+.env.production
