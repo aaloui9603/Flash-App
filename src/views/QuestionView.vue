@@ -2,18 +2,22 @@
 import { ref, computed, onMounted } from 'vue'
 import { useQuestionStore } from '../stores/questionStore.js'
 
+// ── Store ──────────────────────────────────────────────────────────────────
 const questionStore = useQuestionStore()
 
+// ── State ──────────────────────────────────────────────────────────────────
 const istUmgedreht = ref(false)
 const heuteBeantwortet = ref(false)
 
 const HEUTE_KEY = 'tagesfrage_datum'
 
+// ── Lifecycle ──────────────────────────────────────────────────────────────
 onMounted(async () => {
   await questionStore.ladeFragen()
   pruefeHeutigenStatus()
 })
 
+// ── Tagesfragen-Logik ──────────────────────────────────────────────────────
 function pruefeHeutigenStatus() {
   const heute = new Date().toISOString().split('T')[0]
   const gespeichertesDatum = localStorage.getItem(HEUTE_KEY)

@@ -5,6 +5,7 @@ import StatisticsView from '../views/StatisticsView.vue'
 import NotesView from '../views/NotesView.vue'
 import LearnView from '../views/LearnView.vue'
 import QuestionView from '../views/QuestionView.vue'
+import FragenkatalogView from '../views/FragenkatalogView.vue'
 
 const routes = [
     {
@@ -36,6 +37,11 @@ const routes = [
         path: '/questions',
         name: 'Questions',
         component: QuestionView
+    },
+    {
+        path: '/katalog',
+        name: 'fragenkatalog',
+        component: FragenkatalogView
     }
 ]
 

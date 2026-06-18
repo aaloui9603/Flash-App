@@ -159,3 +159,9 @@ $opacity-hover: 0.85;
 $editor-btn-min-width: 2rem;
 $editor-divider-height: 1.5rem;
 $editor-min-height: 200px;
+
+// Antwort-Validierungsfarben
+$color-answer-correct: #00BFFF; 
+$color-answer-correct-glow: rgba(0, 191, 255, 0.35);
+$color-answer-wrong: #C2185B; 
+$color-answer-wrong-glow: rgba(194, 24, 91, 0.35);
