@@ -1,33 +1,63 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useNotesStore } from '../stores/notesStore.js'
 import NoteCard from '../components/notes/NoteCard.vue'
 import NoteEditor from '../components/notes/NoteEditor.vue'
 
 const notesStore = useNotesStore()
 
-const titel = ref('')
-const inhalt = ref('')
+// ── State ──────────────────────────────────────────────────────────────────
+const titel           = ref('')
+const inhalt          = ref('')
 const bearbeitungsModus = ref(false)
-const aktiveNotizId = ref(null)
-const formRef = ref(null)
+const aktiveNotizId   = ref(null)
+const formRef         = ref(null)
 
+// Ordner-State: welcher Ordner ist gerade im Formular gewählt
+const gewaehlterOrdner = ref(null)
+
+// Ordner-Filter: welcher Ordner wird gerade angezeigt (null = alle)
+const filterOrdner = ref(null)
+
+// ── Ordner-Palette (kein Hardcode — Schlüssel → Label + CSS-Variable) ─────
+const ORDNER_PALETTE = [
+  { schluessel: 'cyan',        label: 'Cyan',        farbe: 'var(--ordner-cyan)'        },
+  { schluessel: 'meerblau',    label: 'Meerblau',    farbe: 'var(--ordner-meerblau)'    },
+  { schluessel: 'aquamarin',   label: 'Aquamarin',   farbe: 'var(--ordner-aquamarin)'   },
+  { schluessel: 'violetred',   label: 'VioletRed',   farbe: 'var(--ordner-violetred)'   },
+  { schluessel: 'orchid',      label: 'Orchid',      farbe: 'var(--ordner-orchid)'      },
+  { schluessel: 'lavendel',    label: 'Lavendel',    farbe: 'var(--ordner-lavendel)'    },
+  { schluessel: 'indianred',   label: 'IndianRed',   farbe: 'var(--ordner-indianred)'   },
+  { schluessel: 'springgreen', label: 'SpringGreen', farbe: 'var(--ordner-springgreen)' }
+]
+
+// ── Lifecycle ──────────────────────────────────────────────────────────────
 onMounted(async () => {
   await notesStore.ladeNotes()
 })
 
+// ── Gefilterter Notizen-Array ──────────────────────────────────────────────
+// null = alle anzeigen, sonst nur Notizen mit passendem Ordner-Schlüssel
+const gefilterteNotes = computed(() => {
+  if (!filterOrdner.value) return notesStore.notes
+  return notesStore.notes.filter(n => n.ordner === filterOrdner.value)
+})
+
+// ── Formular-Funktionen ────────────────────────────────────────────────────
 function neueNotiz() {
-  titel.value = ''
-  inhalt.value = ''
+  titel.value            = ''
+  inhalt.value           = ''
+  gewaehlterOrdner.value = null
   bearbeitungsModus.value = false
-  aktiveNotizId.value = null
+  aktiveNotizId.value    = null
 }
 
 function notizBearbeiten(notiz) {
-  titel.value = notiz.titel
-  inhalt.value = notiz.inhalt
+  titel.value             = notiz.titel
+  inhalt.value            = notiz.inhalt
+  gewaehlterOrdner.value  = notiz.ordner ?? null
   bearbeitungsModus.value = true
-  aktiveNotizId.value = notiz.id
+  aktiveNotizId.value     = notiz.id
 
   setTimeout(() => {
     formRef.value?.scrollIntoView({ behavior: 'smooth', block: 'start' })
@@ -42,13 +72,13 @@ async function speichern() {
       aktiveNotizId.value,
       titel.value.trim(),
       inhalt.value,
-      null
+      gewaehlterOrdner.value
     )
   } else {
     await notesStore.notizHinzufuegen(
       titel.value.trim(),
       inhalt.value,
-      null
+      gewaehlterOrdner.value
     )
   }
   neueNotiz()
@@ -62,6 +92,7 @@ async function loeschen(id) {
 <template>
   <div class="notes">
 
+    <!-- Header -->
     <div class="notes__header">
       <h1 class="notes__titel">📝 Notizen</h1>
       <button class="notes__neu-btn neu-button" @click="neueNotiz">
@@ -69,8 +100,37 @@ async function loeschen(id) {
       </button>
     </div>
 
+    <!-- Ordner-Filter -->
+    <div class="notes__filter glass">
+      <button
+        class="notes__filter-btn neu-button"
+        :class="{ 'notes__filter-btn--aktiv': filterOrdner === null }"
+        @click="filterOrdner = null"
+      >
+        Alle
+      </button>
+      <button
+        v-for="ordner in ORDNER_PALETTE"
+        :key="ordner.schluessel"
+        class="notes__filter-btn neu-button"
+        :class="{ 'notes__filter-btn--aktiv': filterOrdner === ordner.schluessel }"
+        :style="filterOrdner === ordner.schluessel
+          ? { background: ordner.farbe, color: 'var(--color-schwarz)' }
+          : {}"
+        @click="filterOrdner = ordner.schluessel"
+      >
+        <span
+          class="notes__filter-punkt"
+          :style="{ background: ordner.farbe }"
+        />
+        {{ ordner.label }}
+      </button>
+    </div>
+
+    <!-- Layout -->
     <div class="notes__layout">
 
+      <!-- Formular -->
       <aside class="notes__sidebar">
         <div class="notes__form glass" ref="formRef">
 
@@ -78,6 +138,7 @@ async function loeschen(id) {
             {{ bearbeitungsModus ? '✏️ Notiz bearbeiten' : '➕ Neue Notiz' }}
           </h2>
 
+          <!-- Titel -->
           <div class="notes__form-group">
             <label class="notes__label">Titel</label>
             <input
@@ -88,11 +149,40 @@ async function loeschen(id) {
             />
           </div>
 
+          <!-- Ordner-Auswahl -->
+          <div class="notes__form-group">
+            <label class="notes__label">Ordner (optional)</label>
+            <div class="notes__ordner-auswahl">
+              <button
+                class="notes__ordner-btn neu-button"
+                :class="{ 'notes__ordner-btn--aktiv': gewaehlterOrdner === null }"
+                @click="gewaehlterOrdner = null"
+              >
+                Kein Ordner
+              </button>
+              <button
+                v-for="ordner in ORDNER_PALETTE"
+                :key="ordner.schluessel"
+                class="notes__ordner-btn neu-button"
+                :class="{ 'notes__ordner-btn--aktiv': gewaehlterOrdner === ordner.schluessel }"
+                :title="ordner.label"
+                @click="gewaehlterOrdner = ordner.schluessel"
+              >
+                <span
+                  class="notes__ordner-farbe"
+                  :style="{ background: ordner.farbe }"
+                />
+              </button>
+            </div>
+          </div>
+
+          <!-- Inhalt (TipTap) -->
           <div class="notes__form-group">
             <label class="notes__label">Inhalt</label>
             <NoteEditor v-model="inhalt" />
           </div>
 
+          <!-- Buttons -->
           <div class="notes__form-buttons">
             <button
               class="notes__btn neu-button"
@@ -113,19 +203,23 @@ async function loeschen(id) {
         </div>
       </aside>
 
+      <!-- Notizen-Grid -->
       <main class="notes__content">
 
-        <p v-if="notesStore.isLoading" class="notes__loading">
+        <p v-if="notesStore.isLoading" class="notes__leer">
           Lädt...
         </p>
 
-        <p v-else-if="notesStore.notes.length === 0" class="notes__leer">
-          Noch keine Notizen vorhanden. Erstelle deine erste Notiz! 📝
+        <p v-else-if="gefilterteNotes.length === 0" class="notes__leer">
+          {{ filterOrdner
+            ? 'Keine Notizen in diesem Ordner.'
+            : 'Noch keine Notizen vorhanden. Erstelle deine erste Notiz! 📝'
+          }}
         </p>
 
         <div v-else class="notes__grid">
           <NoteCard
-            v-for="note in notesStore.notes"
+            v-for="note in gefilterteNotes"
             :key="note.id"
             :note="note"
             @bearbeiten="notizBearbeiten"
@@ -170,6 +264,40 @@ async function loeschen(id) {
   background: var(--glass-bg-strong);
 }
 
+/* Ordner-Filter-Leiste */
+.notes__filter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-xs);
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-radius: var(--radius-md);
+  align-items: center;
+}
+
+.notes__filter-btn {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  border-radius: var(--radius-full);
+  transition: var(--transition-fast);
+}
+
+.notes__filter-btn--aktiv {
+  color: var(--color-text);
+  background: var(--glass-bg-strong);
+}
+
+.notes__filter-punkt {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* Layout */
 .notes__layout {
   display: grid;
   grid-template-columns: 1fr 2fr;
@@ -177,6 +305,7 @@ async function loeschen(id) {
   align-items: start;
 }
 
+/* Formular */
 .notes__form {
   display: flex;
   flex-direction: column;
@@ -226,6 +355,39 @@ async function loeschen(id) {
   color: var(--color-text-muted);
 }
 
+/* Ordner-Auswahl im Formular */
+.notes__ordner-auswahl {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-xs);
+  align-items: center;
+}
+
+.notes__ordner-btn {
+  padding: var(--spacing-xs) var(--spacing-sm);
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+  border-radius: var(--radius-full);
+  transition: var(--transition-fast);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+}
+
+.notes__ordner-btn--aktiv {
+  background: var(--glass-bg-strong);
+  color: var(--color-text);
+}
+
+.notes__ordner-farbe {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  border: var(--border-width-thin) solid var(--glass-border);
+}
+
+/* Form-Buttons */
 .notes__form-buttons {
   display: flex;
   gap: var(--spacing-sm);
@@ -249,7 +411,7 @@ async function loeschen(id) {
   color: var(--color-error);
 }
 
-.notes__loading,
+/* Grid */
 .notes__leer {
   text-align: center;
   color: var(--color-text-muted);
