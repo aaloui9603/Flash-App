@@ -31,10 +31,10 @@ export const useNotesStore = defineStore('notes', () => {
   }
 
   // Neue Notiz hinzufügen
-  async function notizHinzufuegen(titel, inhalt, farbe) {
+  async function notizHinzufuegen(titel, inhalt, ordner) {
     const { data, error: sbError } = await supabase
       .from('notes')
-      .insert([{ titel, inhalt, farbe }])
+      .insert([{ titel, inhalt, ordner }])
       .select()
 
     if (sbError) {
@@ -45,10 +45,10 @@ export const useNotesStore = defineStore('notes', () => {
   }
 
   // Notiz aktualisieren
-  async function notizAktualisieren(id, titel, inhalt, farbe) {
+  async function notizAktualisieren(id, titel, inhalt, ordner) {
     const { error: sbError } = await supabase
       .from('notes')
-      .update({ titel, inhalt, farbe, updated_at: new Date().toISOString() })
+      .update({ titel, inhalt, farbe, ordner, updated_at: new Date().toISOString() })
       .eq('id', id)
 
     if (sbError) {
@@ -58,7 +58,7 @@ export const useNotesStore = defineStore('notes', () => {
       if (notiz) {
         notiz.titel = titel
         notiz.inhalt = inhalt
-        notiz.farbe = farbe
+        notiz.farbe = ordner
       }
     }
   }
