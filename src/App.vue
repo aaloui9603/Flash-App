@@ -1,9 +1,8 @@
 <script setup>
 import { RouterView } from 'vue-router'
-import { useDark } from '@vueuse/core'
 import AppNavbar from './components/ui/AppNavbar.vue'
-
-const isDark = useDark()
+import AppFooter from './components/ui/AppFooter.vue'
+import BlueBooster from './components/chatbot/BlueBooster.vue'
 </script>
 
 <template>
@@ -12,6 +11,8 @@ const isDark = useDark()
     <main class="app-main">
       <RouterView />
     </main>
+    <AppFooter />
+    <BlueBooster />
   </div>
 </template>
 
