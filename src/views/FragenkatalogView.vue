@@ -7,7 +7,7 @@ import NoteEditor from '../components/notes/NoteEditor.vue'
 
 // ── Stores & Composables ───────────────────────────────────────────────────
 const questionStore = useQuestionStore()
-const toast = useToast()
+const toast         = useToast()
 
 const {
   attempts,
@@ -19,27 +19,52 @@ const {
 } = useAnswerValidation()
 
 // ── State ──────────────────────────────────────────────────────────────────
-const aktuelleFrageText = ref('')     // Frage-Text von der Anthropic API
-const aktuelleFrageMuster = ref('')   // Musterantwort von der API
-const aktuelleFrageId = ref(null)     // Temporäre ID pro generierter Frage
-const antwortHtml = ref('')           // User-Antwort aus NoteEditor (HTML)
-const laedt = ref(false)              // true während API antwortet
+const aktuelleFrageText   = ref('')
+const aktuelleFrageMuster = ref('')
+const aktuelleFrageId     = ref(null)
+const antwortHtml         = ref('')
+const laedt               = ref(false)
+const gestellteFragen     = ref([])
 
-// Lokaler Zähler für temporäre Frage-IDs
 let frageZaehler = 0
 
+// ── Themen-Liste für zufälligen Einstieg ──────────────────────────────────
+const THEMEN = [
+  'Vue 3 Composition API',
+  'JavaScript Arrays und Methoden',
+  'CSS Flexbox',
+  'CSS Grid',
+  'Supabase CRUD',
+  'Git Workflow',
+  'Vite Build-Tool',
+  'Pinia State Management',
+  'SCSS Variablen',
+  'Vue Router',
+  'TypeScript Grundlagen',
+  'HTML Semantik',
+  'REST API',
+  'Async/Await',
+  'Vue Lifecycle Hooks'
+]
+
 // ── Hilfsfunktion: HTML-Tags entfernen ────────────────────────────────────
-// Die Anthropic API braucht reinen Text — kein HTML.
 function htmlZuPlaintext(html) {
   return html.replace(/<[^>]*>/g, '').trim()
 }
 
 // ── Neue Frage von der Anthropic API laden ─────────────────────────────────
 async function neueFrage() {
-  laedt.value = true
+  laedt.value       = true
   antwortHtml.value = ''
 
   try {
+    const zufall       = Math.floor(Math.random() * 100000)
+    const zufallsThema = THEMEN[Math.floor(Math.random() * THEMEN.length)]
+
+    const vermeiden = gestellteFragen.value.length > 0
+      ? `\nBereits gestellte Fragen (diese NICHT wiederholen):\n${gestellteFragen.value.map((f, i) => `${i + 1}. ${f}`).join('\n')}`
+      : ''
+
     const response = await fetch('/api/chat', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -47,8 +72,8 @@ async function neueFrage() {
         messages: [
           {
             role: 'user',
-            content: `Du bist ein Webentwicklungs-Lerncoach.
-Erstelle EINE zufällige Prüfungsfrage über Webentwicklung (Vue 3, JavaScript, CSS, HTML, Supabase, Git, Vite oder Pinia).
+            content: `Du bist ein Webentwicklungs-Lerncoach. [Seed: ${zufall}]
+Erstelle EINE Prüfungsfrage speziell über das Thema: ${zufallsThema}.${vermeiden}
 Antworte NUR in diesem JSON-Format ohne Markdown-Backticks:
 {
   "frage": "...",
@@ -59,14 +84,19 @@ Antworte NUR in diesem JSON-Format ohne Markdown-Backticks:
       })
     })
 
-    const data = await response.json()
-    const text = data.content?.[0]?.text ?? ''
+    const data   = await response.json()
+    const text   = data.content?.[0]?.text ?? ''
     const parsed = JSON.parse(text)
 
-    aktuelleFrageText.value = parsed.frage
+    aktuelleFrageText.value   = parsed.frage
     aktuelleFrageMuster.value = parsed.musterantwort
 
-    // Eindeutige temporäre ID für den Versuchszähler
+    // Frage zur Liste hinzufügen — max. 10 merken
+    gestellteFragen.value.push(parsed.frage)
+    if (gestellteFragen.value.length > 10) {
+      gestellteFragen.value.shift()
+    }
+
     frageZaehler++
     aktuelleFrageId.value = `api-frage-${frageZaehler}`
     initQuestion(aktuelleFrageId.value)
@@ -112,10 +142,10 @@ async function speichern() {
   if (!aktuelleFrageText.value || !antwortHtml.value) return
 
   await questionStore.antwortSpeichern({
-    frage: aktuelleFrageText.value,
+    frage:         aktuelleFrageText.value,
     musterantwort: aktuelleFrageMuster.value,
     nutzerantwort: antwortHtml.value,
-    korrekt: validationStatus.value[aktuelleFrageId.value] === 'correct'
+    korrekt:       validationStatus.value[aktuelleFrageId.value] === 'correct'
   })
 
   toast.success('Frage und Antwort gespeichert! 💾')
@@ -250,7 +280,6 @@ neueFrage()
   cursor: not-allowed;
 }
 
-/* Frage-Block — glaskantiger Rahmen mit Umrandung (Anforderung Word-Datei) */
 .katalog__frage-block {
   display: flex;
   flex-direction: column;
@@ -286,7 +315,6 @@ neueFrage()
   font-size: var(--font-size-md);
 }
 
-/* Antwort-Block — Rahmen wechselt Farbe je nach Validierungsstatus */
 .katalog__antwort-block {
   display: flex;
   flex-direction: column;
@@ -314,7 +342,6 @@ neueFrage()
   border-color: var(--glass-border);
 }
 
-/* Versuchs-Punkte */
 .katalog__versuche {
   display: flex;
   gap: var(--spacing-xs);
@@ -336,7 +363,6 @@ neueFrage()
   background: var(--color-answer-correct);
 }
 
-/* Aktions-Buttons */
 .katalog__aktionen {
   display: flex;
   gap: var(--spacing-md);
@@ -360,7 +386,6 @@ neueFrage()
   color: var(--color-success);
 }
 
-/* Musterantwort-Block */
 .katalog__muster {
   display: flex;
   flex-direction: column;
