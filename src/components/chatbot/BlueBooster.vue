@@ -1,6 +1,7 @@
 <script setup>
 import { ref, nextTick, watch } from 'vue'
-import { useBlueBooster } from '../../composables/useBlueBooster'
+import { marked } from 'marked'
+import { useBlueBooster } from '../../composables/useBlueBooster.js'
 
 const {
   nachrichten,
@@ -13,9 +14,14 @@ const {
 } = useBlueBooster()
 
 // ── State ──────────────────────────────────────────────────────────────────
-const chatOffen    = ref(false)
-const eingabe      = ref('')
+const chatOffen      = ref(false)
+const eingabe        = ref('')
 const nachrichtenRef = ref(null)
+
+// ── Markdown → HTML ────────────────────────────────────────────────────────
+function renderMarkdown(text) {
+  return marked.parse(text)
+}
 
 // ── Chat öffnen / schließen ────────────────────────────────────────────────
 function toggleChat() {
@@ -25,12 +31,12 @@ function toggleChat() {
 // ── Nachricht abschicken ───────────────────────────────────────────────────
 async function abschicken() {
   if (!eingabe.value.trim()) return
-  const text   = eingabe.value
+  const text    = eingabe.value
   eingabe.value = ''
   await nachrichtSenden(text)
 }
 
-// Enter-Taste zum Senden (Shift+Enter = neue Zeile)
+// ── Enter-Taste zum Senden (Shift+Enter = neue Zeile) ─────────────────────
 function enterHandler(event) {
   if (event.shiftKey) return
   event.preventDefault()
@@ -134,7 +140,14 @@ watch(nachrichten, async () => {
                 v-if="nachricht.role === 'assistant'"
                 class="booster__nachricht-avatar"
               >😊</span>
-              <p class="booster__nachricht-text">{{ nachricht.content }}</p>
+
+              <!-- Markdown für Assistant, Plain Text für User -->
+              <p
+                class="booster__nachricht-text"
+                v-html="nachricht.role === 'assistant'
+                  ? renderMarkdown(nachricht.content)
+                  : nachricht.content"
+              />
             </div>
 
             <!-- Lade-Indikator -->
@@ -365,6 +378,25 @@ watch(nachrichten, async () => {
   padding: var(--spacing-xs) var(--spacing-sm);
   border-radius: var(--radius-md);
   color: var(--color-text);
+}
+
+/* Markdown-Styling innerhalb der Nachrichten */
+.booster__nachricht-text :deep(strong) {
+  font-weight: var(--font-weight-bold);
+}
+
+.booster__nachricht-text :deep(p) {
+  margin: 0 0 var(--spacing-xs) 0;
+}
+
+.booster__nachricht-text :deep(ul),
+.booster__nachricht-text :deep(ol) {
+  padding-left: var(--spacing-md);
+  margin: var(--spacing-xs) 0;
+}
+
+.booster__nachricht-text :deep(li) {
+  margin-bottom: var(--spacing-xs);
 }
 
 .booster__nachricht--user .booster__nachricht-text {
