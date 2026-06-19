@@ -47,9 +47,12 @@ const THEMEN = [
   'Vue Lifecycle Hooks'
 ]
 
-// ── Hilfsfunktion: HTML-Tags entfernen ────────────────────────────────────
+// ── Hilfsfunktion: HTML → Plaintext ───────────────────────────────────────
 function htmlZuPlaintext(html) {
-  return html.replace(/<[^>]*>/g, '').trim()
+  if (!html) return ''
+  const div = document.createElement('div')
+  div.innerHTML = html
+  return div.textContent || div.innerText || ''
 }
 
 // ── Neue Frage von der Anthropic API laden ─────────────────────────────────
@@ -125,30 +128,30 @@ async function handleValidate() {
     plainText
   )
 
-  const state = validationStatus.value[aktuelleFrageId.value]
+  const zustand = validationStatus.value[aktuelleFrageId.value]
 
-  if (state === 'correct') {
+  if (zustand === 'correct') {
     toast.success('Richtig! Sehr gut. 🎉')
-  } else if (state === 'wrong') {
-    const remaining = MAX_ATTEMPTS - attempts.value[aktuelleFrageId.value]
-    toast.error(`Leider falsch. Noch ${remaining} Versuch${remaining === 1 ? '' : 'e'}.`)
-  } else if (state === 'revealed') {
+  } else if (zustand === 'wrong') {
+    const verbleibend = MAX_ATTEMPTS - attempts.value[aktuelleFrageId.value]
+    toast.error(`Leider falsch. Noch ${verbleibend} Versuch${verbleibend === 1 ? '' : 'e'}.`)
+  } else if (zustand === 'revealed') {
     toast.info('3 Versuche aufgebraucht — die Antwort wird jetzt angezeigt.')
   }
 }
 
-// ── Frage + Antwort in Supabase speichern ─────────────────────────────────
+// ── Frage in Supabase speichern ────────────────────────────────────────────
+// Korrektur: frageHinzufuegen statt antwortSpeichern (existiert nicht im Store)
 async function speichern() {
-  if (!aktuelleFrageText.value || !antwortHtml.value) return
+  if (!aktuelleFrageText.value || !aktuelleFrageMuster.value) return
 
-  await questionStore.antwortSpeichern({
-    frage:         aktuelleFrageText.value,
-    musterantwort: aktuelleFrageMuster.value,
-    nutzerantwort: antwortHtml.value,
-    korrekt:       validationStatus.value[aktuelleFrageId.value] === 'correct'
-  })
+  await questionStore.frageHinzufuegen(
+    aktuelleFrageText.value,
+    aktuelleFrageMuster.value,
+    'Fragenkatalog'
+  )
 
-  toast.success('Frage und Antwort gespeichert! 💾')
+  toast.success('Frage gespeichert! 💾')
 }
 
 // Beim ersten Laden direkt eine Frage generieren
@@ -200,10 +203,10 @@ neueFrage()
       <span
         v-for="n in MAX_ATTEMPTS"
         :key="n"
-        class="katalog__versuch-dot"
+        class="katalog__versuch-punkt"
         :class="{
-          'katalog__versuch-dot--verbraucht': n <= (attempts[aktuelleFrageId] ?? 0),
-          'katalog__versuch-dot--richtig':    validationStatus[aktuelleFrageId] === 'correct'
+          'katalog__versuch-punkt--verbraucht': n <= (attempts[aktuelleFrageId] ?? 0),
+          'katalog__versuch-punkt--richtig':    validationStatus[aktuelleFrageId] === 'correct'
         }"
       />
     </div>
@@ -323,8 +326,6 @@ neueFrage()
   border-radius: var(--radius-lg);
   border: 2px solid transparent;
   background: var(--glass-bg);
-  backdrop-filter: blur(var(--glass-blur));
-  -webkit-backdrop-filter: blur(var(--glass-blur));
   transition: border-color var(--transition-base), box-shadow var(--transition-base);
 }
 
@@ -347,7 +348,7 @@ neueFrage()
   gap: var(--spacing-xs);
 }
 
-.katalog__versuch-dot {
+.katalog__versuch-punkt {
   width: 12px;
   height: 12px;
   border-radius: 50%;
@@ -355,11 +356,11 @@ neueFrage()
   transition: background var(--transition-base);
 }
 
-.katalog__versuch-dot--verbraucht {
+.katalog__versuch-punkt--verbraucht {
   background: var(--color-answer-wrong);
 }
 
-.katalog__versuch-dot--richtig {
+.katalog__versuch-punkt--richtig {
   background: var(--color-answer-correct);
 }
 

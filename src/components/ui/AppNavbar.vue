@@ -1,165 +1,114 @@
 <script setup>
-import { RouterLink, useRoute} from 'vue-router'
+import { RouterLink, useRoute } from 'vue-router'
 import { useDark, useToggle } from '@vueuse/core'
 
-const route = useRoute()
-const isDark = useDark()
-const toggleDark = useToggle(isDark)
-
+const route       = useRoute()
+const isDark      = useDark()
+const toggleDark  = useToggle(isDark)
 </script>
+
 <template>
-    <nav class="navbar glass">
-        <RouterLink to="/" class="navbar__logo">
-            <span class="navbar__logo-text">Flash</span>
-            <span class="navbar__logo-accent">back</span>
+  <nav class="navbar glass">
+
+    <RouterLink to="/" class="navbar__logo">
+      <span class="navbar__logo-text">Flash</span>
+      <span class="navbar__logo-akzent">back</span>
+    </RouterLink>
+
+    <ul class="navbar__links">
+      <li>
+        <RouterLink
+          to="/"
+          class="navbar__link"
+          :class="{ 'navbar__link--aktiv': route.path === '/' }"
+        >
+          🏠 Home
         </RouterLink>
+      </li>
+      <li>
+        <RouterLink
+          to="/search"
+          class="navbar__link"
+          :class="{ 'navbar__link--aktiv': route.path === '/search' }"
+        >
+          🔍 Suche
+        </RouterLink>
+      </li>
+      <li>
+        <RouterLink
+          to="/questions"
+          class="navbar__link"
+          :class="{ 'navbar__link--aktiv': route.path === '/questions' }"
+        >
+          ❓ Tagesfrage
+        </RouterLink>
+      </li>
+      <li>
+        <RouterLink
+          to="/library"
+          class="navbar__link"
+          :class="{ 'navbar__link--aktiv': route.path === '/library' }"
+        >
+          📚 Bibliothek
+        </RouterLink>
+      </li>
+      <li>
+        <RouterLink
+          to="/statistics"
+          class="navbar__link"
+          :class="{ 'navbar__link--aktiv': route.path === '/statistics' }"
+        >
+          📊 Statistik
+        </RouterLink>
+      </li>
+      <li>
+        <RouterLink
+          to="/katalog"
+          class="navbar__link"
+          :class="{ 'navbar__link--aktiv': route.path === '/katalog' }"
+        >
+          🎯 Fragenkatalog
+        </RouterLink>
+      </li>
+      <li>
+        <RouterLink
+          to="/fragen-bibliothek"
+          class="navbar__link"
+          :class="{ 'navbar__link--aktiv': route.path === '/fragen-bibliothek' }"
+        >
+          🗂️ Fragen-Bibliothek
+        </RouterLink>
+      </li>
+      <li>
+        <RouterLink
+          to="/notes"
+          class="navbar__link"
+          :class="{ 'navbar__link--aktiv': route.path === '/notes' }"
+        >
+          📝 Notizen
+        </RouterLink>
+      </li>
+    </ul>
 
-        <ul class="navbar__links">
-            <li>
-                <RouterLink 
-                to="/"
-                class="navbar__link"
-                :class="{ 'navbar__link--active': route.path === '/'}"
-                >
-                🏠 Home 
-            </RouterLink>
-            </li>
-            <li>
-                <RouterLink 
-                to="/search"
-                class="navbar__link"
-                :class="{ 'navbar__link--active': route.path === '/search'}"
-                >
-                🔍 Suche
-            </RouterLink>
-            </li>
-            <li>
-                <RouterLink 
-                to="/fragen-bibliothek"
-                class="navbar__link"
-                :class="{ 'navbar__link--active': route.path === '/fragen-bibliothek' }"
-                >
-                🗂️ Fragen-Bibliothek 
-            </RouterLink>
-            </li>
-            <li>
-                <RouterLink
-                to="/questions"
-                class="navbar__link"
-                :class="{ 'navbar__link--active': route.path === '/questions'}"               
-                >
-                ❓ Tagesfrage
-            </RouterLink>
-            </li>
-            <li>
-                <RouterLink 
-                to="/library"
-                class="navbar__link"
-                :class="{ 'navbar__link--active': route.path === '/library'}"
-                >
-                📚 Bibliothek
-            </RouterLink>
-            </li>
-            <li>
-                <RouterLink
-                  to="/statistics"
-                  class="navbar__link"
-                  :class="{ 'navbar__link--active' : route.path === '/statistics'}"
-                  > 
-                  Statistik 📊
-                </RouterLink>
-            </li>
-            <li>
-                <RouterLink 
-                to="/katalog"
-                class="navbar__link"
-                :class="{ 'navbar__link--active': route.path === '/katalog'}"
-                >
-                🎯  Fragenkatalog 
-            </RouterLink>
-            </li>
-            <li>
-                <RouterLink 
-                to="/notes"
-                class="navbar__link"
-                :class="{ 'navbar__link--active': route.path === '/notes'}"
-                > 
-                📝 Notizen
-            </RouterLink>
-            </li>
-        </ul>
+    <button class="navbar__toggle neu-button" @click="toggleDark()">
+      {{ isDark ? '☀️' : '🌙' }}
+    </button>
 
-        <button class="navbar__toggle neu-button" @click="toggleDark()">
-            {{ isDark ? '☀️' : '🌙' }}
-        </button>
-    </nav>
+  </nav>
 </template>
+
 <style scoped>
 .navbar {
-    display: flex; 
-    align-items: center; 
-    justify-content: space-between; 
-    padding: var(--spacing-md) var(--spacing-xl);
-    position: sticky; 
-    top: 0; 
-    z-index: var(--z-navbar);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spacing-md) var(--spacing-xl);
+  position: sticky;
+  top: 0;
+  z-index: var(--z-navbar);
 }
 
-.navbar__logo {
-    font-size: var(--font-size-2xl); 
-    font-weight: var(--font-weight-bold); 
-}
-
-.navbar__logo-text {
-    color: var(--color-text);
-}
-
-.navbar__logo-accent {
-    color: var(--color-primary); 
-    margin-left: var(--spacing-xs);
-}
-
-.navbar__links {
-    display: flex; 
-    gap: var(--spacing-md);
-}
-
-.navbar__link {
-    color: var(--color-text-secondary); 
-    padding: var(--spacing-xs) var(--spacing-sm);
-    border-radius: var(--radius-sm);
-    transition: var(--transition-fast); 
-    font-weight: var(--font-weight-medium);
-}
-
-.navbar__link:hover {
-    color: var(--color-primary); 
-    background: var(--glass-bg);
-}
-
-.navbar__link--active {
-    color: var(--color-primary);
-    background: var(--glass-bg-strong);
-}
-
-.navbar__toggle {
-    width: var(--toggle-size);
-    height: var(--toggle-size); 
-    border-radius: var(--radius-full);
-    font-size: var(--font-size-md); 
-    display: flex; 
-    align-items: center;
-    justify-content: center;
-    background: var(--glass-bg);
-    border: var(--border-width-thin) solid var(--glass-border);
-    color: var(--color-text);
-    cursor: pointer;
-    transition: var(--transition-fast);
-}
-
-.navbar__toggle:hover {
-    background: var(--glass-bg-strong);
-}
+/* Korrektur: Doppelte Definition entfernt — nur eine .navbar__logo Klasse */
 .navbar__logo {
   font-size: var(--font-size-2xl);
   font-weight: var(--font-weight-bold);
@@ -175,5 +124,57 @@ const toggleDark = useToggle(isDark)
 
 .navbar__logo:active {
   transform: scale(0.97);
+}
+
+.navbar__logo-text {
+  color: var(--color-text);
+}
+
+.navbar__logo-akzent {
+  color: var(--color-primary);
+  margin-left: var(--spacing-xs);
+}
+
+.navbar__links {
+  display: flex;
+  gap: var(--spacing-md);
+}
+
+.navbar__link {
+  color: var(--color-text-secondary);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: var(--radius-sm);
+  transition: var(--transition-fast);
+  font-weight: var(--font-weight-medium);
+}
+
+.navbar__link:hover {
+  color: var(--color-primary);
+  background: var(--glass-bg);
+}
+
+/* Korrektur: --active → --aktiv */
+.navbar__link--aktiv {
+  color: var(--color-primary);
+  background: var(--glass-bg-strong);
+}
+
+.navbar__toggle {
+  width: var(--toggle-size);
+  height: var(--toggle-size);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--glass-bg);
+  border: var(--border-width-thin) solid var(--glass-border);
+  color: var(--color-text);
+  cursor: pointer;
+  transition: var(--transition-fast);
+}
+
+.navbar__toggle:hover {
+  background: var(--glass-bg-strong);
 }
 </style>

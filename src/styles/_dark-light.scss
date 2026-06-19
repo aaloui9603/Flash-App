@@ -174,3 +174,9 @@
   --color-answer-correct-glow: #{$color-answer-correct-glow}; 
   --color-answer-wrong-glow: #{$color-answer-wrong-glow};
 }
+
+// --- Glassmorphismus --
+:root {
+  --glass-blur:        #{$glass-blur};
+  --glass-blur-strong: #{$glass-blur-strong};
+}
