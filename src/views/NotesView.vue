@@ -7,19 +7,15 @@ import NoteEditor from '../components/notes/NoteEditor.vue'
 const notesStore = useNotesStore()
 
 // ── State ──────────────────────────────────────────────────────────────────
-const titel           = ref('')
-const inhalt          = ref('')
+const titel             = ref('')
+const inhalt            = ref('')
 const bearbeitungsModus = ref(false)
-const aktiveNotizId   = ref(null)
-const formRef         = ref(null)
+const aktiveNotizId     = ref(null)
+const formRef           = ref(null)
+const gewaehlterOrdner  = ref(null)
+const filterOrdner      = ref(null)
 
-// Ordner-State: welcher Ordner ist gerade im Formular gewählt
-const gewaehlterOrdner = ref(null)
-
-// Ordner-Filter: welcher Ordner wird gerade angezeigt (null = alle)
-const filterOrdner = ref(null)
-
-// ── Ordner-Palette (kein Hardcode — Schlüssel → Label + CSS-Variable) ─────
+// ── Ordner-Palette ─────────────────────────────────────────────────────────
 const ORDNER_PALETTE = [
   { schluessel: 'cyan',        label: 'Cyan',        farbe: 'var(--ordner-cyan)'        },
   { schluessel: 'meerblau',    label: 'Meerblau',    farbe: 'var(--ordner-meerblau)'    },
@@ -37,25 +33,26 @@ onMounted(async () => {
 })
 
 // ── Gefilterter Notizen-Array ──────────────────────────────────────────────
-// null = alle anzeigen, sonst nur Notizen mit passendem Ordner-Schlüssel
+// Fix: n.farbe statt n.ordner — Supabase-Spalte heißt 'farbe'
 const gefilterteNotes = computed(() => {
   if (!filterOrdner.value) return notesStore.notes
-  return notesStore.notes.filter(n => n.ordner === filterOrdner.value)
+  return notesStore.notes.filter(n => n.farbe === filterOrdner.value)
 })
 
 // ── Formular-Funktionen ────────────────────────────────────────────────────
 function neueNotiz() {
-  titel.value            = ''
-  inhalt.value           = ''
-  gewaehlterOrdner.value = null
+  titel.value             = ''
+  inhalt.value            = ''
+  gewaehlterOrdner.value  = null
   bearbeitungsModus.value = false
-  aktiveNotizId.value    = null
+  aktiveNotizId.value     = null
 }
 
 function notizBearbeiten(notiz) {
   titel.value             = notiz.titel
   inhalt.value            = notiz.inhalt
-  gewaehlterOrdner.value  = notiz.ordner ?? null
+  // Fix: notiz.farbe statt notiz.ordner — Supabase-Spalte heißt 'farbe'
+  gewaehlterOrdner.value  = notiz.farbe ?? null
   bearbeitungsModus.value = true
   aktiveNotizId.value     = notiz.id
 
@@ -138,7 +135,6 @@ async function loeschen(id) {
             {{ bearbeitungsModus ? '✏️ Notiz bearbeiten' : '➕ Neue Notiz' }}
           </h2>
 
-          <!-- Titel -->
           <div class="notes__form-group">
             <label class="notes__label">Titel</label>
             <input
@@ -149,7 +145,6 @@ async function loeschen(id) {
             />
           </div>
 
-          <!-- Ordner-Auswahl -->
           <div class="notes__form-group">
             <label class="notes__label">Ordner (optional)</label>
             <div class="notes__ordner-auswahl">
@@ -176,13 +171,11 @@ async function loeschen(id) {
             </div>
           </div>
 
-          <!-- Inhalt (TipTap) -->
           <div class="notes__form-group">
             <label class="notes__label">Inhalt</label>
             <NoteEditor v-model="inhalt" />
           </div>
 
-          <!-- Buttons -->
           <div class="notes__form-buttons">
             <button
               class="notes__btn neu-button"
@@ -264,7 +257,6 @@ async function loeschen(id) {
   background: var(--glass-bg-strong);
 }
 
-/* Ordner-Filter-Leiste */
 .notes__filter {
   display: flex;
   flex-wrap: wrap;
@@ -297,7 +289,6 @@ async function loeschen(id) {
   flex-shrink: 0;
 }
 
-/* Layout */
 .notes__layout {
   display: grid;
   grid-template-columns: 1fr 2fr;
@@ -305,7 +296,6 @@ async function loeschen(id) {
   align-items: start;
 }
 
-/* Formular */
 .notes__form {
   display: flex;
   flex-direction: column;
@@ -355,7 +345,6 @@ async function loeschen(id) {
   color: var(--color-text-muted);
 }
 
-/* Ordner-Auswahl im Formular */
 .notes__ordner-auswahl {
   display: flex;
   flex-wrap: wrap;
@@ -387,7 +376,6 @@ async function loeschen(id) {
   border: var(--border-width-thin) solid var(--glass-border);
 }
 
-/* Form-Buttons */
 .notes__form-buttons {
   display: flex;
   gap: var(--spacing-sm);
@@ -411,7 +399,6 @@ async function loeschen(id) {
   color: var(--color-error);
 }
 
-/* Grid */
 .notes__leer {
   text-align: center;
   color: var(--color-text-muted);
