@@ -25,15 +25,20 @@ function beiEingabe(event) {
   debounceSearch(event.target.value)
 }
 
+// ── Hilfsfunktion: HTML korrekt zu Plaintext ──────────────────────────────
+// Nutzt DOMParser statt Regex — dekodiert HTML-Entities korrekt
+// Dadurch findet "Änderung" auch "Änderungen" (ä ≠ &auml;)
+function htmlZuPlaintext(html) {
+  if (!html) return ''
+  const div = document.createElement('div')
+  div.innerHTML = html
+  return div.textContent || div.innerText || ''
+}
+
 // ── Hilfsfunktion: Suchbegriff im Text enthalten? ─────────────────────────
 function trifft(text) {
   if (!aktiverSuchbegriff.value.trim()) return false
   return text?.toLowerCase().includes(aktiverSuchbegriff.value.toLowerCase())
-}
-
-// ── Hilfsfunktion: HTML-Tags entfernen für Notiz-Vorschau ─────────────────
-function htmlZuPlaintext(html) {
-  return html?.replace(/<[^>]*>/g, '').trim() ?? ''
 }
 
 // ── Gefilterte Ergebnisse ─────────────────────────────────────────────────
@@ -72,7 +77,6 @@ const keineErgebnisse = computed(() =>
 <template>
   <div class="search">
 
-    <!-- Header -->
     <h1 class="search__titel">🔍 Suche</h1>
 
     <!-- Suchfeld -->
@@ -176,7 +180,6 @@ const keineErgebnisse = computed(() =>
   color: var(--color-text);
 }
 
-/* Suchfeld */
 .search__feld-wrapper {
   display: flex;
   align-items: center;
@@ -218,13 +221,11 @@ const keineErgebnisse = computed(() =>
   background: var(--glass-bg);
 }
 
-/* Ergebnis-Anzahl */
 .search__anzahl {
   font-size: var(--font-size-sm);
   color: var(--color-text-muted);
 }
 
-/* Keine Ergebnisse */
 .search__leer {
   padding: var(--spacing-2xl);
   border-radius: var(--radius-lg);
@@ -237,7 +238,6 @@ const keineErgebnisse = computed(() =>
   margin-top: var(--spacing-sm);
 }
 
-/* Ergebnis-Gruppen */
 .search__gruppe {
   display: flex;
   flex-direction: column;
@@ -256,7 +256,6 @@ const keineErgebnisse = computed(() =>
   gap: var(--spacing-sm);
 }
 
-/* Einzelnes Ergebnis */
 .search__item {
   display: flex;
   flex-direction: column;

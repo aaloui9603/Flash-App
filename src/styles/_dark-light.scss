@@ -169,3 +169,8 @@
   --color-light-sea-green: #{$color-light-sea-green};
   --color-schwarz: #{$color-schwarz};
 }
+
+:root{
+  --color-answer-correct-glow: #{$color-answer-correct-glow}; 
+  --color-answer-wrong-glow: #{$color-answer-wrong-glow};
+}

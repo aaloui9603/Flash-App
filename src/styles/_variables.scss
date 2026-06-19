@@ -177,12 +177,12 @@ $ordner-indianred: #FF6A6A;
 $ordner-springgreen: #76EE00; 
 
 :root {
-    --ordner-cyan: #{$ordner-cyan};
-    --ordner-meerblau: #{$ordner-meerblau};
-    --ordner-aquamarin: #{$ordner-aquamarin}; 
-    --ordner--violetred: #{$ordner-violetred};
-    --ordner-orchid: #{$ordner-orchid};
-    --ordner-lavendel: #{$ordner-lavendel};
-    --ordner-indianred: #{$ordner-indianred};
-    --ordner-springgreen: #{$ordner-springgreen};
+  --ordner-cyan:        #{$ordner-cyan};
+  --ordner-meerblau:    #{$ordner-meerblau};
+  --ordner-aquamarin:   #{$ordner-aquamarin};
+  --ordner-violetred:   #{$ordner-violetred};
+  --ordner-orchid:      #{$ordner-orchid};
+  --ordner-lavendel:    #{$ordner-lavendel};
+  --ordner-indianred:   #{$ordner-indianred};
+  --ordner-springgreen: #{$ordner-springgreen};
 }

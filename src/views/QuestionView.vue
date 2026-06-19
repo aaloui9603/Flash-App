@@ -1,13 +1,17 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { useQuestionStore } from '../stores/questionStore.js'
+import { useToast } from 'vue-toastification'
 
 // ── Store ──────────────────────────────────────────────────────────────────
 const questionStore = useQuestionStore()
+const toast         = useToast()
 
 // ── State ──────────────────────────────────────────────────────────────────
-const istUmgedreht = ref(false)
-const heuteBeantwortet = ref(false)
+const istUmgedreht      = ref(false)
+const heuteBeantwortet  = ref(false)
+const generierteFrage   = ref(null) // temporäre API-Frage wenn Supabase leer
+const generiert         = ref(false)
 
 const HEUTE_KEY = 'tagesfrage_datum'
 
@@ -15,6 +19,11 @@ const HEUTE_KEY = 'tagesfrage_datum'
 onMounted(async () => {
   await questionStore.ladeFragen()
   pruefeHeutigenStatus()
+
+  // Wenn keine Fragen in Supabase → automatisch generieren
+  if (questionStore.questions.length === 0) {
+    await frageAutomatischGenerieren()
+  }
 })
 
 // ── Tagesfragen-Logik ──────────────────────────────────────────────────────
@@ -25,24 +34,76 @@ function pruefeHeutigenStatus() {
 }
 
 const tagesfrage = computed(() => {
-  const nochNicht = questionStore.questions.filter(q => !q.angezeigt_am)
-  if (nochNicht.length > 0) return nochNicht[0]
-  return questionStore.questions[0] ?? null
+  // Zuerst aus Supabase
+  if (questionStore.questions.length > 0) {
+    const nochNicht = questionStore.questions.filter(q => !q.angezeigt_am)
+    if (nochNicht.length > 0) return nochNicht[0]
+    return questionStore.questions[0]
+  }
+  // Fallback: API-generierte Frage
+  return generierteFrage.value
 })
 
+// ── Auto-Generierung wenn Supabase leer ───────────────────────────────────
+async function frageAutomatischGenerieren() {
+  try {
+    const response = await fetch('/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        messages: [
+          {
+            role: 'user',
+            content: `Erstelle EINE Lernfrage über Webentwicklung für Einsteiger.
+Antworte NUR in diesem JSON-Format ohne Markdown-Backticks:
+{
+  "frage": "...",
+  "antwort": "..."
+}`
+          }
+        ]
+      })
+    })
+
+    const data   = await response.json()
+    const text   = data.content?.[0]?.text ?? ''
+    const parsed = JSON.parse(text)
+
+    // Als temporäre Frage setzen — wird auch in Supabase gespeichert
+    await questionStore.frageHinzufuegen(
+      parsed.frage,
+      parsed.antwort,
+      'Webentwicklung'
+    )
+
+    // Store neu laden
+    await questionStore.ladeFragen()
+    generiert.value = true
+    toast.info('Neue Frage automatisch generiert! 🎯')
+
+  } catch (err) {
+    console.error('Auto-Generierung fehlgeschlagen:', err)
+  }
+}
+
+// ── Karte umdrehen ─────────────────────────────────────────────────────────
 function umdrehen() {
   istUmgedreht.value = !istUmgedreht.value
 }
 
+// ── Verstanden-Button ──────────────────────────────────────────────────────
 async function beantwortet() {
   if (!tagesfrage.value) return
 
-  await questionStore.frageAlsAngezeigtMarkieren(tagesfrage.value.id)
+  // Nur in Supabase markieren wenn echte Frage (mit ID)
+  if (tagesfrage.value.id) {
+    await questionStore.frageAlsAngezeigtMarkieren(tagesfrage.value.id)
+  }
 
   const heute = new Date().toISOString().split('T')[0]
   localStorage.setItem(HEUTE_KEY, heute)
   heuteBeantwortet.value = true
-  istUmgedreht.value = false
+  istUmgedreht.value     = false
 }
 </script>
 
@@ -51,14 +112,8 @@ async function beantwortet() {
 
     <h1 class="questions__titel">❓ Tägliche Frage</h1>
 
-    <!-- Keine Fragen vorhanden -->
-    <div v-if="questionStore.questions.length === 0" class="questions__leer glass">
-      <p>Noch keine Fragen vorhanden.</p>
-      <p class="questions__leer-hint">Füge Fragen in der Datenbank hinzu!</p>
-    </div>
-
     <!-- Heute schon beantwortet -->
-    <div v-else-if="heuteBeantwortet" class="questions__fertig glass">
+    <div v-if="heuteBeantwortet" class="questions__fertig glass">
       <span class="questions__fertig-icon">🌟</span>
       <h2 class="questions__fertig-titel">Für heute erledigt!</h2>
       <p class="questions__fertig-text">
@@ -69,23 +124,34 @@ async function beantwortet() {
       </p>
     </div>
 
+    <!-- Laden -->
+    <div v-else-if="questionStore.isLoading" class="questions__leer glass">
+      <p>Lädt...</p>
+    </div>
+
     <!-- Tagesfrage -->
     <template v-else-if="tagesfrage">
 
       <p class="questions__info">
         {{ questionStore.nochNichtAngezeigt.length }} Fragen noch nicht gesehen
+        <span v-if="generiert"> — Frage automatisch generiert 🎯</span>
       </p>
 
       <!-- Karte -->
       <div class="questions__card-wrapper" @click="umdrehen">
-        <div class="questions__card" :class="{ 'questions__card--flipped': istUmgedreht }">
+        <div
+          class="questions__card"
+          :class="{ 'questions__card--flipped': istUmgedreht }"
+        >
 
+          <!-- Vorderseite -->
           <div class="questions__front glass--card">
             <span class="questions__badge">Frage des Tages</span>
             <p class="questions__card-text">{{ tagesfrage.frage }}</p>
             <span class="questions__hint">Klicke zum Umdrehen</span>
           </div>
 
+          <!-- Rückseite -->
           <div class="questions__back glass--card">
             <span class="questions__badge questions__badge--back">Antwort</span>
             <p class="questions__card-text">{{ tagesfrage.antwort }}</p>
@@ -101,6 +167,12 @@ async function beantwortet() {
       </div>
 
     </template>
+
+    <!-- Keine Fragen und auch keine Generierung möglich -->
+    <div v-else class="questions__leer glass">
+      <p>Keine Frage verfügbar.</p>
+      <p class="questions__leer-hint">Bitte versuche es erneut.</p>
+    </div>
 
   </div>
 </template>
@@ -125,10 +197,12 @@ async function beantwortet() {
   color: var(--color-text-muted);
 }
 
+/* ── Karten-Flip — overflow: visible ist PFLICHT für 3D-Transform ── */
 .questions__card-wrapper {
   perspective: var(--card-perspective);
   cursor: pointer;
   height: var(--card-height);
+  overflow: visible;  /* Fix: verhindert Clipping der 3D-Animation */
 }
 
 .questions__card {
@@ -137,6 +211,7 @@ async function beantwortet() {
   position: relative;
   transform-style: preserve-3d;
   transition: var(--transition-flip);
+  overflow: visible;  /* Fix: verhindert Clipping der 3D-Animation */
 }
 
 .questions__card--flipped {
@@ -156,6 +231,7 @@ async function beantwortet() {
   justify-content: center;
   gap: var(--spacing-md);
   padding: var(--spacing-xl);
+  overflow: visible;  /* Fix: verhindert Clipping */
 }
 
 .questions__back {

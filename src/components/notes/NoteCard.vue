@@ -20,7 +20,7 @@ const ORDNER_FARBEN = {
   springgreen: 'var(--ordner-springgreen)'
 }
 
-// Gibt die Farbe des Ordners zurück — oder null wenn kein Ordner gewählt
+// Gibt die Farbe zurück — liest note.farbe (Supabase-Spaltenname)
 function ordnerFarbe(schluessel) {
   if (!schluessel) return null
   return ORDNER_FARBEN[schluessel] ?? null
@@ -38,11 +38,11 @@ function loeschen() {
 <template>
   <div class="note-card glass--card" @click="bearbeiten">
 
-    <!-- Farbiger Ordner-Streifen oben -->
+    <!-- Farbiger Ordner-Streifen — liest note.farbe statt note.ordner -->
     <div
-      v-if="ordnerFarbe(note.ordner)"
+      v-if="ordnerFarbe(note.farbe)"
       class="note-card__ordner-streifen"
-      :style="{ background: ordnerFarbe(note.ordner) }"
+      :style="{ background: ordnerFarbe(note.farbe) }"
     />
 
     <div class="note-card__header">
@@ -85,7 +85,6 @@ function loeschen() {
   box-shadow: var(--glass-shadow);
 }
 
-/* Farbiger Streifen am oberen Rand der Karte */
 .note-card__ordner-streifen {
   position: absolute;
   top: 0;

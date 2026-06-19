@@ -4,17 +4,15 @@ import { supabase } from '../composables/useSupabase.js'
 
 export const useNotesStore = defineStore('notes', () => {
 
-  // --- State ---
-  const notes = ref([])
+  // ── State ──────────────────────────────────────────────────────────────
+  const notes     = ref([])
   const isLoading = ref(false)
-  const error = ref(null)
+  const error     = ref(null)
 
-  // --- Actions ---
-
-  // Alle Notizen laden
+  // ── Alle Notizen laden ─────────────────────────────────────────────────
   async function ladeNotes() {
     isLoading.value = true
-    error.value = null
+    error.value     = null
 
     const { data, error: sbError } = await supabase
       .from('notes')
@@ -23,6 +21,7 @@ export const useNotesStore = defineStore('notes', () => {
 
     if (sbError) {
       error.value = sbError.message
+      console.error('ladeNotes Fehler:', sbError.message)
     } else {
       notes.value = data
     }
@@ -30,40 +29,47 @@ export const useNotesStore = defineStore('notes', () => {
     isLoading.value = false
   }
 
-  // Neue Notiz hinzufügen
-  async function notizHinzufuegen(titel, inhalt, ordner) {
+  // ── Neue Notiz hinzufügen ──────────────────────────────────────────────
+  // Supabase-Spalte heißt 'farbe' — deshalb farbe als Key
+  async function notizHinzufuegen(titel, inhalt, farbe) {
     const { data, error: sbError } = await supabase
       .from('notes')
-      .insert([{ titel, inhalt, ordner }])
+      .insert([{ titel, inhalt, farbe }])
       .select()
 
     if (sbError) {
       error.value = sbError.message
+      console.error('notizHinzufuegen Fehler:', sbError.message)
+      return false
     } else {
       notes.value.unshift(data[0])
+      return true
     }
   }
 
-  // Notiz aktualisieren
-  async function notizAktualisieren(id, titel, inhalt, ordner) {
+  // ── Notiz aktualisieren ────────────────────────────────────────────────
+  async function notizAktualisieren(id, titel, inhalt, farbe) {
     const { error: sbError } = await supabase
       .from('notes')
-      .update({ titel, inhalt, farbe, ordner, updated_at: new Date().toISOString() })
+      .update({ titel, inhalt, farbe, updated_at: new Date().toISOString() })
       .eq('id', id)
 
     if (sbError) {
       error.value = sbError.message
+      console.error('notizAktualisieren Fehler:', sbError.message)
+      return false
     } else {
       const notiz = notes.value.find(n => n.id === id)
       if (notiz) {
-        notiz.titel = titel
+        notiz.titel  = titel
         notiz.inhalt = inhalt
-        notiz.farbe = ordner
+        notiz.farbe  = farbe
       }
+      return true
     }
   }
 
-  // Notiz löschen
+  // ── Notiz löschen ─────────────────────────────────────────────────────
   async function notizLoeschen(id) {
     const { error: sbError } = await supabase
       .from('notes')
@@ -72,6 +78,7 @@ export const useNotesStore = defineStore('notes', () => {
 
     if (sbError) {
       error.value = sbError.message
+      console.error('notizLoeschen Fehler:', sbError.message)
     } else {
       notes.value = notes.value.filter(n => n.id !== id)
     }
