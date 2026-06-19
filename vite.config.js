@@ -9,23 +9,47 @@ export default defineConfig({
     tailwindcss(),
     VitePWA({
       registerType: 'autoUpdate',
+
+      // PWA auch lokal testen
+      devOptions: {
+        enabled: true
+      },
+
       manifest: {
-        name: 'Flashcard-App',
-        short_name: 'Flashcard',
-        description: 'Deine persönliche Lernkartei-App',
+        name: 'Flashback — Deine Lernkartei',
+        short_name: 'Flashback',
+        description: 'Deine persönliche Lernkartei-App mit Flashcards, Notizen und KI-Unterstützung',
         theme_color: '#00BFFF',
         background_color: '#0f172a',
         display: 'standalone',
+        start_url: '/',
         icons: [
           {
-            src: '/icons.svg',
-            sizes: 'any',
-            type: 'image/svg+xml'
+            src: '/icon-192.png',
+            sizes: '192x192',
+            type: 'image/png',
+            purpose: 'any'
+          },
+          {
+            src: '/icon-512.png',
+            sizes: '512x512',
+            type: 'image/png',
+            purpose: 'any'
+          },
+          {
+            src: '/icon-512.png',
+            sizes: '512x512',
+            type: 'image/png',
+            purpose: 'maskable'
           }
         ]
       },
+
       workbox: {
-        globPatterns: ['**/*.{js,css,html,ico,png,svg,woff,woff2,webp}']
+        globPatterns: ['**/*.{js,css,html,ico,png,svg,woff,woff2,webp}'],
+
+        // API-Anfragen niemals cachen — immer live vom Server
+        navigateFallbackDenylist: [/^\/api/]
       }
     })
   ],
