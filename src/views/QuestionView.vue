@@ -8,12 +8,15 @@ const questionStore = useQuestionStore()
 const toast         = useToast()
 
 // ── State ──────────────────────────────────────────────────────────────────
-const istUmgedreht      = ref(false)
-const heuteBeantwortet  = ref(false)
-const generierteFrage   = ref(null) // temporäre API-Frage wenn Supabase leer
-const generiert         = ref(false)
+const istUmgedreht       = ref(false)
+const generiert          = ref(false)
+const tagesZaehler       = ref(0)    // Anzahl beantworteter Fragen heute
+const limitUeberschritten = ref(false) // true wenn >= 20 Fragen beantwortet
 
-const HEUTE_KEY = 'tagesfrage_datum'
+// ── localStorage-Keys ──────────────────────────────────────────────────────
+const HEUTE_KEY   = 'tagesfrage_datum'
+const ZAEHLER_KEY = 'tagesfrage_zaehler'
+const MAX_FRAGEN  = 20
 
 // ── Lifecycle ──────────────────────────────────────────────────────────────
 onMounted(async () => {
@@ -28,20 +31,31 @@ onMounted(async () => {
 
 // ── Tagesfragen-Logik ──────────────────────────────────────────────────────
 function pruefeHeutigenStatus() {
-  const heute = new Date().toISOString().split('T')[0]
+  const heute              = new Date().toISOString().split('T')[0]
   const gespeichertesDatum = localStorage.getItem(HEUTE_KEY)
-  heuteBeantwortet.value = gespeichertesDatum === heute
+
+  if (gespeichertesDatum === heute) {
+    // Gleicher Tag → Zähler laden
+    tagesZaehler.value = parseInt(localStorage.getItem(ZAEHLER_KEY) ?? '0')
+  } else {
+    // Neuer Tag → Zähler zurücksetzen
+    tagesZaehler.value = 0
+    localStorage.setItem(HEUTE_KEY, heute)
+    localStorage.setItem(ZAEHLER_KEY, '0')
+  }
+
+  // Limit prüfen
+  limitUeberschritten.value = tagesZaehler.value >= MAX_FRAGEN
 }
 
+// ── Nächste unbeantwortete Frage ───────────────────────────────────────────
 const tagesfrage = computed(() => {
-  // Zuerst aus Supabase
   if (questionStore.questions.length > 0) {
     const nochNicht = questionStore.questions.filter(q => !q.angezeigt_am)
     if (nochNicht.length > 0) return nochNicht[0]
     return questionStore.questions[0]
   }
-  // Fallback: API-generierte Frage
-  return generierteFrage.value
+  return null
 })
 
 // ── Auto-Generierung wenn Supabase leer ───────────────────────────────────
@@ -69,14 +83,12 @@ Antworte NUR in diesem JSON-Format ohne Markdown-Backticks:
     const text   = data.content?.[0]?.text ?? ''
     const parsed = JSON.parse(text)
 
-    // Als temporäre Frage setzen — wird auch in Supabase gespeichert
     await questionStore.frageHinzufuegen(
       parsed.frage,
       parsed.antwort,
       'Webentwicklung'
     )
 
-    // Store neu laden
     await questionStore.ladeFragen()
     generiert.value = true
     toast.info('Neue Frage automatisch generiert! 🎯')
@@ -95,15 +107,25 @@ function umdrehen() {
 async function beantwortet() {
   if (!tagesfrage.value) return
 
-  // Nur in Supabase markieren wenn echte Frage (mit ID)
+  // Frage in Supabase als angezeigt markieren
   if (tagesfrage.value.id) {
     await questionStore.frageAlsAngezeigtMarkieren(tagesfrage.value.id)
   }
 
-  const heute = new Date().toISOString().split('T')[0]
-  localStorage.setItem(HEUTE_KEY, heute)
-  heuteBeantwortet.value = true
-  istUmgedreht.value     = false
+  // Zähler erhöhen und speichern
+  tagesZaehler.value++
+  localStorage.setItem(ZAEHLER_KEY, String(tagesZaehler.value))
+  localStorage.setItem(HEUTE_KEY, new Date().toISOString().split('T')[0])
+
+  istUmgedreht.value = false
+
+  // Limit erreicht?
+  if (tagesZaehler.value >= MAX_FRAGEN) {
+    limitUeberschritten.value = true
+    toast.warning('Stopp! Tägliche Learning Questions überschritten! 🛑')
+  } else {
+    toast.success(`Gut gemacht! ${tagesZaehler.value} von ${MAX_FRAGEN} Fragen heute. ✅`)
+  }
 }
 </script>
 
@@ -112,15 +134,18 @@ async function beantwortet() {
 
     <h1 class="questions__titel">❓ Tägliche Frage</h1>
 
-    <!-- Heute schon beantwortet -->
-    <div v-if="heuteBeantwortet" class="questions__fertig glass">
-      <span class="questions__fertig-icon">🌟</span>
-      <h2 class="questions__fertig-titel">Für heute erledigt!</h2>
-      <p class="questions__fertig-text">
-        Du hast deine Tagesfrage bereits beantwortet. Morgen gibt es eine neue!
+    <!-- Limit überschritten -->
+    <div v-if="limitUeberschritten" class="questions__limit glass">
+      <span class="questions__limit-icon">🛑</span>
+      <h2 class="questions__limit-titel">
+        Stopp! Tägliche Learning Questions überschritten!
+      </h2>
+      <p class="questions__limit-text">
+        Du hast heute bereits {{ MAX_FRAGEN }} Fragen beantwortet.
+        Morgen geht es weiter — gut gemacht! 💪
       </p>
-      <p class="questions__fertig-zaehler">
-        Noch {{ questionStore.nochNichtAngezeigt.length }} Fragen übrig
+      <p class="questions__limit-hinweis">
+        Noch {{ questionStore.nochNichtAngezeigt.length }} Fragen warten auf dich.
       </p>
     </div>
 
@@ -132,10 +157,21 @@ async function beantwortet() {
     <!-- Tagesfrage -->
     <template v-else-if="tagesfrage">
 
-      <p class="questions__info">
-        {{ questionStore.nochNichtAngezeigt.length }} Fragen noch nicht gesehen
-        <span v-if="generiert"> — Frage automatisch generiert 🎯</span>
-      </p>
+      <!-- Fortschrittsanzeige -->
+      <div class="questions__fortschritt">
+        <span class="questions__zaehler">
+          {{ tagesZaehler }} / {{ MAX_FRAGEN }} Fragen heute
+        </span>
+        <div class="questions__fortschritt-balken">
+          <div
+            class="questions__fortschritt-fuell"
+            :style="{ width: (tagesZaehler / MAX_FRAGEN * 100) + '%' }"
+          />
+        </div>
+        <span v-if="generiert" class="questions__generiert">
+          Frage automatisch generiert 🎯
+        </span>
+      </div>
 
       <!-- Karte -->
       <div class="questions__card-wrapper" @click="umdrehen">
@@ -168,7 +204,7 @@ async function beantwortet() {
 
     </template>
 
-    <!-- Keine Fragen und auch keine Generierung möglich -->
+    <!-- Keine Fragen verfügbar -->
     <div v-else class="questions__leer glass">
       <p>Keine Frage verfügbar.</p>
       <p class="questions__leer-hint">Bitte versuche es erneut.</p>
@@ -192,17 +228,78 @@ async function beantwortet() {
   color: var(--color-text);
 }
 
-.questions__info {
+/* ── Limit-Block ──────────────────────────────────────────────────────────── */
+.questions__limit {
+  padding: var(--spacing-2xl);
+  border-radius: var(--radius-lg);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-md);
+  border: var(--border-width-thin) solid var(--color-warning);
+}
+
+.questions__limit-icon {
+  font-size: var(--font-size-4xl);
+}
+
+.questions__limit-titel {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-warning);
+}
+
+.questions__limit-text {
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-md);
+}
+
+.questions__limit-hinweis {
+  color: var(--color-primary);
   font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+}
+
+/* ── Fortschrittsanzeige ──────────────────────────────────────────────────── */
+.questions__fortschritt {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+
+.questions__zaehler {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  font-weight: var(--font-weight-medium);
+}
+
+.questions__fortschritt-balken {
+  width: 100%;
+  height: 6px;
+  background: var(--glass-bg-strong);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.questions__fortschritt-fuell {
+  height: 100%;
+  background: var(--color-primary);
+  border-radius: var(--radius-full);
+  transition: width var(--transition-base);
+}
+
+.questions__generiert {
+  font-size: var(--font-size-xs);
   color: var(--color-text-muted);
 }
 
-/* ── Karten-Flip — overflow: visible ist PFLICHT für 3D-Transform ── */
+/* ── Karten-Flip ─────────────────────────────────────────────────────────── */
 .questions__card-wrapper {
   perspective: var(--card-perspective);
   cursor: pointer;
   height: var(--card-height);
-  overflow: visible;  /* Fix: verhindert Clipping der 3D-Animation */
+  overflow: visible;
 }
 
 .questions__card {
@@ -211,7 +308,7 @@ async function beantwortet() {
   position: relative;
   transform-style: preserve-3d;
   transition: var(--transition-flip);
-  overflow: visible;  /* Fix: verhindert Clipping der 3D-Animation */
+  overflow: visible;
 }
 
 .questions__card--flipped {
@@ -231,7 +328,7 @@ async function beantwortet() {
   justify-content: center;
   gap: var(--spacing-md);
   padding: var(--spacing-xl);
-  overflow: visible;  /* Fix: verhindert Clipping */
+  overflow: visible;
 }
 
 .questions__back {
@@ -281,36 +378,5 @@ async function beantwortet() {
 .questions__leer-hint {
   font-size: var(--font-size-sm);
   margin-top: var(--spacing-sm);
-}
-
-.questions__fertig {
-  padding: var(--spacing-2xl);
-  border-radius: var(--radius-lg);
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--spacing-md);
-}
-
-.questions__fertig-icon {
-  font-size: var(--font-size-4xl);
-}
-
-.questions__fertig-titel {
-  font-size: var(--font-size-2xl);
-  font-weight: var(--font-weight-bold);
-  color: var(--color-text);
-}
-
-.questions__fertig-text {
-  color: var(--color-text-secondary);
-  font-size: var(--font-size-md);
-}
-
-.questions__fertig-zaehler {
-  color: var(--color-primary);
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-medium);
 }
 </style>
