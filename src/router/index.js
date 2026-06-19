@@ -7,6 +7,7 @@ import LearnView from '../views/LearnView.vue'
 import QuestionView from '../views/QuestionView.vue'
 import FragenkatalogView from '../views/FragenkatalogView.vue'
 import SearchView from '../views/SearchView.vue'
+import FragenBibliothekView from '../views/FragenBibliothekView.vue'
 
 const routes = [
   {
@@ -48,6 +49,11 @@ const routes = [
     path: '/search',
     name: 'Search',
     component: SearchView
+  },
+  {
+    path: '/fragen-bibliothek',
+    name: 'FragenBibliothek',
+    component: FragenBibliothekView
   }
 ]
 

@@ -34,6 +34,15 @@ const toggleDark = useToggle(isDark)
             </RouterLink>
             </li>
             <li>
+                <RouterLink 
+                to="/fragen-bibliothek"
+                class="navbar__link"
+                :class="{ 'navbar__link--active': route.path === '/fragen-bibliothek' }"
+                >
+                🗂️ Fragen-Bibliothek 
+            </RouterLink>
+            </li>
+            <li>
                 <RouterLink
                 to="/questions"
                 class="navbar__link"
