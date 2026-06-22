@@ -1,8 +1,61 @@
 @use './variables' as *;
 
+// ── @font-face: Space Grotesk ──────────────────────────────────────────────
+@font-face {
+  font-family: 'Space Grotesk';
+  src: url('../assets/fonts/SpaceGrotesk-Light.woff') format('woff');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
 
-// Typografie-Klassen
+@font-face {
+  font-family: 'Space Grotesk';
+  src: url('../assets/fonts/SpaceGrotesk-Regular.woff') format('woff');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
 
+@font-face {
+  font-family: 'Space Grotesk';
+  src: url('../assets/fonts/SpaceGrotesk-Medium.woff') format('woff');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Space Grotesk';
+  src: url('../assets/fonts/SpaceGrotesk-SemiBold.woff') format('woff');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Space Grotesk';
+  src: url('../assets/fonts/SpaceGrotesk-Bold.woff') format('woff');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+// ── Basis: Schrift auf alle Elemente anwenden ──────────────────────────────
+*,
+*::before,
+*::after {
+  font-family: var(--font-family-base);
+}
+
+body {
+  font-family: var(--font-family-base);
+  font-size: $font-size-md;
+  line-height: $line-height-base;
+  color: var(--color-text);
+}
+
+// ── Überschriften ──────────────────────────────────────────────────────────
 h1, h2, h3, h4, h5, h6 {
   color: var(--color-text);
   line-height: $line-height-tight;
@@ -16,6 +69,7 @@ h4 { font-size: $font-size-xl; }
 h5 { font-size: $font-size-lg; }
 h6 { font-size: $font-size-md; }
 
+// ── Fließtext ──────────────────────────────────────────────────────────────
 p {
   color: var(--color-text);
   font-size: $font-size-md;

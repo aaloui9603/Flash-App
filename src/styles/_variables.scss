@@ -116,6 +116,9 @@ $neu-shadow-light: $shadow-neumorphism-light;
 $neu-shadow-dark: $shadow-neumorphism-dark;
 
 // --- Typografie ---
+$font-family-space-grotesk: 'Space Grotesk', system-ui, sans-serif; // NEU
+$font-family-base:           $font-family-space-grotesk;             // NEU
+
 $font-size-xs: 0.75rem;
 $font-size-sm: 0.875rem;
 $font-size-md: 1rem;
@@ -161,22 +164,24 @@ $editor-divider-height: 1.5rem;
 $editor-min-height: 200px;
 
 // Antwort-Validierungsfarben
-$color-answer-correct: #00BFFF; 
+$color-answer-correct: #00BFFF;
 $color-answer-correct-glow: rgba(0, 191, 255, 0.35);
-$color-answer-wrong: #C2185B; 
+$color-answer-wrong: #C2185B;
 $color-answer-wrong-glow: rgba(194, 24, 91, 0.35);
 
-// Ordner-Farben 
-$ordner-cyan: #00CDCD; 
-$ordner-meerblau: #006994; 
-$ordner-aquamarin: #66CDAA; 
-$ordner-violetred: #D02090; 
-$ordner-orchid: #B452CD; 
-$ordner-lavendel: #FFF0F5; 
-$ordner-indianred: #FF6A6A; 
-$ordner-springgreen: #76EE00; 
+// Ordner-Farben
+$ordner-cyan: #00CDCD;
+$ordner-meerblau: #006994;
+$ordner-aquamarin: #66CDAA;
+$ordner-violetred: #D02090;
+$ordner-orchid: #B452CD;
+$ordner-lavendel: #FFF0F5;
+$ordner-indianred: #FF6A6A;
+$ordner-springgreen: #76EE00;
 
 :root {
+  --font-family-base:   #{$font-family-base}; // NEU
+
   --ordner-cyan:        #{$ordner-cyan};
   --ordner-meerblau:    #{$ordner-meerblau};
   --ordner-aquamarin:   #{$ordner-aquamarin};
