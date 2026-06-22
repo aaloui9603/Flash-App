@@ -75,8 +75,8 @@ async function gelerntToggle(id, gelernt) {
   await flashcardStore.gelerntMarkieren(id, gelernt)
 }
 
-async function loeschen(id) {
-  await flashcardStore.flashcardLoeschen(id)
+async function aktualisieren(id, frage, antwort, kategorie, ordner) {
+  await flashcardStore.flashcardAktualisieren(id, frage, antwort, kategorie, ordner)
 }
 </script>
 
@@ -165,6 +165,7 @@ async function loeschen(id) {
           :flashcards="gefilterteFlashcards"
           @gelernt-toggle="gelerntToggle"
           @loeschen="loeschen"
+          @aktualisieren="aktualisieren"
         />
 
       </main>

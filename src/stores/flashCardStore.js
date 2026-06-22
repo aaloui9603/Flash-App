@@ -30,7 +30,6 @@ export const useFlashcardStore = defineStore('flashcards', () => {
   }
 
   // ── Neue Flashcard hinzufügen ──────────────────────────────────────────
-  // ordner = ausgewählte Ordnerfarbe (z.B. '#00CED1') oder null
   async function flashcardHinzufuegen(frage, antwort, kategorie, ordner) {
     const { data, error: sbError } = await supabase
       .from('flashcards')
@@ -43,6 +42,30 @@ export const useFlashcardStore = defineStore('flashcards', () => {
       return false
     } else {
       flashcards.value.unshift(data[0])
+      return true
+    }
+  }
+
+  // ── Flashcard aktualisieren (NEU für A-3) ─────────────────────────────
+  async function flashcardAktualisieren(id, frage, antwort, kategorie, ordner) {
+    const { error: sbError } = await supabase
+      .from('flashcards')
+      .update({ frage, antwort, kategorie, ordner })
+      .eq('id', id)
+
+    if (sbError) {
+      error.value = sbError.message
+      console.error('flashcardAktualisieren Fehler:', sbError.message)
+      return false
+    } else {
+      // Lokal aktualisieren — kein neues Laden nötig
+      const karte = flashcards.value.find(f => f.id === id)
+      if (karte) {
+        karte.frage     = frage
+        karte.antwort   = antwort
+        karte.kategorie = kategorie
+        karte.ordner    = ordner
+      }
       return true
     }
   }
@@ -84,6 +107,7 @@ export const useFlashcardStore = defineStore('flashcards', () => {
     error,
     ladeFlashcards,
     flashcardHinzufuegen,
+    flashcardAktualisieren,
     flashcardLoeschen,
     gelerntMarkieren
   }

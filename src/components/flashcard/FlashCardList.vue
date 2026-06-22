@@ -8,7 +8,7 @@ const props = defineProps({
   }
 })
 
-const emit = defineEmits(['gelernt-toggle', 'loeschen'])
+const emit = defineEmits(['gelernt-toggle', 'loeschen', 'aktualisieren'])
 
 function gelerntToggle(id, gelernt) {
   emit('gelernt-toggle', id, gelernt)
@@ -17,12 +17,16 @@ function gelerntToggle(id, gelernt) {
 function loeschen(id) {
   emit('loeschen', id)
 }
+
+function aktualisieren(id, frage, antwort, kategorie, ordner) {
+  emit('aktualisieren', id, frage, antwort, kategorie, ordner)
+}
 </script>
 
 <template>
   <div class="card-list">
 
-    <p v-if="flashcards.length === 0" class="card-list__empty">
+    <p v-if="flashcards.length === 0" class="card-list__leer">
       Noch keine Flashcards vorhanden. Erstelle deine erste Karte! 🃏
     </p>
 
@@ -33,6 +37,7 @@ function loeschen(id) {
         :flashcard="flashcard"
         @gelernt-toggle="gelerntToggle"
         @loeschen="loeschen"
+        @aktualisieren="aktualisieren"
       />
     </div>
 
@@ -40,7 +45,7 @@ function loeschen(id) {
 </template>
 
 <style scoped>
-.card-list__empty {
+.card-list__leer {
   text-align: center;
   color: var(--color-text-muted);
   font-size: var(--font-size-lg);
