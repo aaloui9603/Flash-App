@@ -6,7 +6,6 @@ const scanAktiv        = ref(false)
 const modalOffen       = ref(false)
 const aktuelleNachricht = ref(null)
 
-// ── Motivationsnachrichten ─────────────────────────────────────────────────
 const nachrichten = [
   { emoji: '🚀', titel: 'Keep going!',       text: 'Du lernst jeden Tag besser. Mach weiter so!' },
   { emoji: '🧠', titel: 'Wissen ist Macht',  text: 'Wissen ist die beste Investition in dich selbst.' },
@@ -18,7 +17,6 @@ const nachrichten = [
   { emoji: '💡', titel: 'Bleib neugierig!',  text: 'Jede Frage die du stellst macht dich klüger.' },
 ]
 
-// ── Scan starten ───────────────────────────────────────────────────────────
 function scanStarten() {
   if (scanAktiv.value) return
 
@@ -176,7 +174,6 @@ function modalSchliessen() {
   color: var(--color-text-muted);
 }
 
-/* ── Fingerabdruck — fixed, Mitte unten ───────────────────────────────── */
 .app-footer__fingerabdruck {
   position: fixed;
   bottom: 1.5rem;
@@ -217,7 +214,6 @@ function modalSchliessen() {
   50%       { box-shadow: 0 0 28px rgba(0, 191, 255, 0.7); }
 }
 
-/* Scan-Linie */
 .app-footer__scan-linie {
   position: absolute;
   left: 0;
@@ -234,7 +230,6 @@ function modalSchliessen() {
   100% { top: 100%; opacity: 0.3; }
 }
 
-/* ── Modal ────────────────────────────────────────────────────────────── */
 .app-footer__modal-overlay {
   position: fixed;
   inset: 0;
@@ -315,7 +310,6 @@ function modalSchliessen() {
   color: var(--color-text-muted);
 }
 
-/* ── Modal-Animation ──────────────────────────────────────────────────── */
 .modal-enter-active,
 .modal-leave-active {
   transition: all 0.3s ease;
@@ -333,7 +327,6 @@ function modalSchliessen() {
   transform: scale(1);
 }
 
-/* ── Mobile ───────────────────────────────────────────────────────────── */
 @media (max-width: 767px) {
   .app-footer {
     flex-direction: column;

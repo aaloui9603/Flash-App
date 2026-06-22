@@ -3,23 +3,18 @@ import { ref, computed, onMounted } from 'vue'
 import { useQuestionStore } from '../stores/questionStore'
 import { useToast } from 'vue-toastification'
 
-// ── Store ──────────────────────────────────────────────────────────────────
 const questionStore = useQuestionStore()
 const toast         = useToast()
 
-// ── State ──────────────────────────────────────────────────────────────────
 const suchbegriff    = ref('')
 const aufgeklappteId = ref(null)
 
-// ── Lifecycle ──────────────────────────────────────────────────────────────
 onMounted(async () => {
   await questionStore.ladeFragen()
 })
 
-// ── Gefilterte Fragen ──────────────────────────────────────────────────────
 const gefilterteFragen = computed(() => {
   if (!suchbegriff.value.trim()) return questionStore.questions
-
   const begriff = suchbegriff.value.toLowerCase()
   return questionStore.questions.filter(q =>
     q.frage?.toLowerCase().includes(begriff) ||
@@ -28,23 +23,16 @@ const gefilterteFragen = computed(() => {
   )
 })
 
-// ── Antwort auf- und zuklappen ─────────────────────────────────────────────
 function toggleAntwort(id) {
   aufgeklappteId.value = aufgeklappteId.value === id ? null : id
 }
 
-// ── Frage löschen ──────────────────────────────────────────────────────────
 async function loeschen(id) {
   await questionStore.frageLoeschen(id)
   toast.success('Frage gelöscht.')
-
-  if (aufgeklappteId.value === id) {
-    aufgeklappteId.value = null
-  }
+  if (aufgeklappteId.value === id) aufgeklappteId.value = null
 }
 
-// ── Datum formatieren ──────────────────────────────────────────────────────
-// Fehler 3 behoben: formatDatum (nicht formateDatum)
 function formatDatum(isoString) {
   if (!isoString) return null
   return new Date(isoString).toLocaleDateString('de-DE')
@@ -54,12 +42,106 @@ function formatDatum(isoString) {
 <template>
   <div class="bibliothek">
 
-    <!-- Header -->
+    <!-- Header mit SVG-Buch-Icon -->
     <div class="bibliothek__header">
-      <h1 class="bibliothek__titel">🗂️ Fragen-Bibliothek</h1>
-      <span class="bibliothek__anzahl">
-        {{ gefilterteFragen.length }} von {{ questionStore.questions.length }} Fragen
-      </span>
+
+      <div class="bibliothek__header-links">
+
+        <!-- Glasförmiges Buch-Icon -->
+        <div class="bibliothek__buch-wrapper">
+          <svg
+            class="bibliothek__buch-svg"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 64 64"
+            width="56"
+            height="56"
+            aria-hidden="true"
+          >
+            <defs>
+              <!-- Farbverlauf -->
+              <linearGradient id="buch-verlauf" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%"   stop-color="#00BFFF" stop-opacity="1"  />
+                <stop offset="50%"  stop-color="#00CED1" stop-opacity="0.9"/>
+                <stop offset="100%" stop-color="#5F9EA0" stop-opacity="0.8"/>
+              </linearGradient>
+
+              <!-- Glas-Verlauf für Cover -->
+              <linearGradient id="buch-glas" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%"   stop-color="rgba(255,255,255,0.25)" />
+                <stop offset="100%" stop-color="rgba(255,255,255,0.05)" />
+              </linearGradient>
+
+              <!-- Glow-Filter -->
+              <filter id="buch-glow" x="-15%" y="-15%" width="130%" height="130%">
+                <feGaussianBlur stdDeviation="2" result="blur" />
+                <feMerge>
+                  <feMergeNode in="blur" />
+                  <feMergeNode in="SourceGraphic" />
+                </feMerge>
+              </filter>
+            </defs>
+
+            <!-- Hintergrund-Kreis (Glas) -->
+            <circle
+              cx="32" cy="32" r="30"
+              fill="rgba(0, 191, 255, 0.08)"
+              stroke="rgba(0, 191, 255, 0.3)"
+              stroke-width="1"
+            />
+
+            <!-- Buch-Gruppe -->
+            <g filter="url(#buch-glow)">
+
+              <!-- Linke Buchseite -->
+              <rect
+                x="10" y="14" width="20" height="36"
+                rx="3"
+                fill="url(#buch-glas)"
+                stroke="url(#buch-verlauf)"
+                stroke-width="1.5"
+              />
+
+              <!-- Rechte Buchseite -->
+              <rect
+                x="34" y="14" width="20" height="36"
+                rx="3"
+                fill="url(#buch-glas)"
+                stroke="url(#buch-verlauf)"
+                stroke-width="1.5"
+              />
+
+              <!-- Buchrücken (Mitte) -->
+              <rect
+                x="28" y="12" width="8" height="40"
+                rx="2"
+                fill="url(#buch-verlauf)"
+                opacity="0.7"
+              />
+
+              <!-- Seitenlinien links -->
+              <line x1="14" y1="22" x2="26" y2="22" stroke="url(#buch-verlauf)" stroke-width="1" opacity="0.6"/>
+              <line x1="14" y1="28" x2="26" y2="28" stroke="url(#buch-verlauf)" stroke-width="1" opacity="0.5"/>
+              <line x1="14" y1="34" x2="26" y2="34" stroke="url(#buch-verlauf)" stroke-width="1" opacity="0.4"/>
+              <line x1="14" y1="40" x2="26" y2="40" stroke="url(#buch-verlauf)" stroke-width="1" opacity="0.3"/>
+
+              <!-- Seitenlinien rechts -->
+              <line x1="38" y1="22" x2="50" y2="22" stroke="url(#buch-verlauf)" stroke-width="1" opacity="0.6"/>
+              <line x1="38" y1="28" x2="50" y2="28" stroke="url(#buch-verlauf)" stroke-width="1" opacity="0.5"/>
+              <line x1="38" y1="34" x2="50" y2="34" stroke="url(#buch-verlauf)" stroke-width="1" opacity="0.4"/>
+              <line x1="38" y1="40" x2="50" y2="40" stroke="url(#buch-verlauf)" stroke-width="1" opacity="0.3"/>
+
+            </g>
+          </svg>
+        </div>
+
+        <div class="bibliothek__header-text">
+          <h1 class="bibliothek__titel">Fragen-Bibliothek</h1>
+          <span class="bibliothek__anzahl">
+            {{ gefilterteFragen.length }} von {{ questionStore.questions.length }} Fragen
+          </span>
+        </div>
+
+      </div>
     </div>
 
     <!-- Suchfeld -->
@@ -97,7 +179,6 @@ function formatDatum(isoString) {
     </div>
 
     <!-- Fragen-Liste -->
-    <!-- Fehler 2 behoben: v-for (nicht v.for) -->
     <div v-else class="bibliothek__liste">
       <div
         v-for="frage in gefilterteFragen"
@@ -105,14 +186,12 @@ function formatDatum(isoString) {
         class="bibliothek__item glass--card"
       >
 
-        <!-- Fehler 5 behoben: Item-Header ist jetzt ein eigener Block -->
         <div class="bibliothek__item-header">
           <div class="bibliothek__item-meta">
             <span
               v-if="frage.angezeigt_am"
               class="bibliothek__badge bibliothek__badge--gesehen"
             >
-              <!-- Fehler 3 behoben: formatDatum (nicht formateDatum) -->
               ✅ Gesehen am {{ formatDatum(frage.angezeigt_am) }}
             </span>
             <span v-else class="bibliothek__badge bibliothek__badge--neu">
@@ -141,21 +220,15 @@ function formatDatum(isoString) {
           </div>
         </div>
 
-        <!-- Frage-Text — Fehler 5 behoben: außerhalb von item-header -->
         <p class="bibliothek__frage-text">{{ frage.frage }}</p>
 
-        <!-- Antwort — Fehler 5 behoben: außerhalb von item-header -->
         <Transition name="bibliothek-slide">
-          <div
-            v-if="aufgeklappteId === frage.id"
-            class="bibliothek__antwort"
-          >
+          <div v-if="aufgeklappteId === frage.id" class="bibliothek__antwort">
             <span class="bibliothek__antwort-label">💡 Antwort</span>
             <p class="bibliothek__antwort-text">{{ frage.antwort }}</p>
           </div>
         </Transition>
 
-        <!-- Datum — Fehler 5 behoben: außerhalb von item-header -->
         <p class="bibliothek__datum">
           📅 Erstellt am {{ formatDatum(frage.created_at) }}
         </p>
@@ -175,10 +248,50 @@ function formatDatum(isoString) {
   margin: 0 auto;
 }
 
+/* ── Header ───────────────────────────────────────────────────────────── */
 .bibliothek__header {
   display: flex;
   align-items: center;
   justify-content: space-between;
+}
+
+.bibliothek__header-links {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-lg);
+}
+
+/* Glas-Wrapper für Buch-Icon */
+.bibliothek__buch-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 72px;
+  height: 72px;
+  border-radius: var(--radius-full);
+  background: var(--glass-bg);
+  border: var(--border-width-thin) solid rgba(0, 191, 255, 0.3);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: 0 0 20px rgba(0, 191, 255, 0.15);
+  transition: var(--transition-fast);
+  flex-shrink: 0;
+}
+
+.bibliothek__buch-wrapper:hover {
+  background: var(--glass-bg-strong);
+  box-shadow: 0 0 28px rgba(0, 191, 255, 0.3);
+  transform: scale(1.05);
+}
+
+.bibliothek__buch-svg {
+  display: block;
+}
+
+.bibliothek__header-text {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
 }
 
 .bibliothek__titel {
@@ -192,6 +305,7 @@ function formatDatum(isoString) {
   color: var(--color-text-muted);
 }
 
+/* ── Suche ────────────────────────────────────────────────────────────── */
 .bibliothek__suche {
   display: flex;
   align-items: center;
@@ -222,7 +336,6 @@ function formatDatum(isoString) {
 
 .bibliothek__suche-clear {
   padding: var(--spacing-xs) var(--spacing-sm);
-  /* Fehler 4 behoben: --font-size-sm (nicht --front-size-sm) */
   font-size: var(--font-size-sm);
   color: var(--color-text-muted);
   border-radius: var(--radius-sm);
@@ -234,6 +347,7 @@ function formatDatum(isoString) {
   background: var(--glass-bg);
 }
 
+/* ── Leer-Zustände ────────────────────────────────────────────────────── */
 .bibliothek__leer {
   text-align: center;
   color: var(--color-text-muted);
@@ -241,7 +355,6 @@ function formatDatum(isoString) {
   padding: var(--spacing-2xl);
 }
 
-/* Fehler 6 behoben: fehlende Klasse ergänzt */
 .bibliothek__leer-block {
   padding: var(--spacing-2xl);
   border-radius: var(--radius-lg);
@@ -254,6 +367,7 @@ function formatDatum(isoString) {
   margin-top: var(--spacing-sm);
 }
 
+/* ── Fragen-Liste ─────────────────────────────────────────────────────── */
 .bibliothek__liste {
   display: flex;
   flex-direction: column;
@@ -374,7 +488,7 @@ function formatDatum(isoString) {
   padding-top: var(--spacing-sm);
 }
 
-/* Fehler 7 behoben: enter-from und leave-to ergänzt */
+/* ── Slide-Animation ──────────────────────────────────────────────────── */
 .bibliothek-slide-enter-active,
 .bibliothek-slide-leave-active {
   transition: var(--transition-base);
@@ -391,5 +505,17 @@ function formatDatum(isoString) {
 .bibliothek-slide-leave-from {
   opacity: 1;
   max-height: 300px;
+}
+
+/* ── Mobile ───────────────────────────────────────────────────────────── */
+@media (max-width: 767px) {
+  .bibliothek__buch-wrapper {
+    width: 56px;
+    height: 56px;
+  }
+
+  .bibliothek__titel {
+    font-size: var(--font-size-2xl);
+  }
 }
 </style>
