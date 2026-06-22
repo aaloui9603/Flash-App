@@ -303,4 +303,42 @@ const featureSlides = [
   color: var(--color-text);
   font-weight: var(--font-weight-semibold);
 }
+
+
+@media (max-width: 767px) {
+  .home__titel {
+    font-size: var(--font-size-2xl);
+  }
+
+  .home__statistik {
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--spacing-xs);               
+  }
+
+  .home__statistik-karte {
+    padding: var(--spacing-sm);           
+    gap: var(--spacing-xs);
+  }
+
+  .home__statistik-icon {
+    font-size: var(--font-size-xl);       
+  }
+
+  .home__statistik-zahl {
+    font-size: var(--font-size-xl);
+  }
+
+  .home__schnellzugriff-links {
+    grid-template-columns: repeat(3, 1fr); 
+    gap: var(--spacing-sm);
+  }
+
+  .home__schnellzugriff-karte {
+    padding: var(--spacing-md);           
+  }
+
+  .home__schnellzugriff-icon {
+    font-size: var(--font-size-2xl);
+  }
+}
 </style>

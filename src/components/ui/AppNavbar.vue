@@ -275,4 +275,14 @@ const burgerLinks = [
   color: var(--color-primary);
   background: var(--glass-bg-strong);
 }
+
+@media (max-width: 767px) {
+  .navbar__links {
+    display:none;
+  }
+
+  .navbar {
+    padding: var(--spacing-sm var(--spacing-md);)
+  }
+}
 </style>

@@ -312,4 +312,16 @@ async function aktualisieren(id, frage, antwort, kategorie, ordner) {
   color: var(--color-text-muted);
   font-size: var(--font-size-lg);
 }
+
+@media (max-width: 1023px) {
+  .bibliothek__layout {
+    grid-template-columns: 1fr; 
+  }
+
+  .bibliothek__kopf {
+    flex-direction: column; 
+    align-items: flex-start; 
+    gap: var(--spacing-sm);
+  }
+}
 </style>

@@ -412,4 +412,37 @@ async function loeschen(id) {
   gap: var(--spacing-lg);
   align-items: start;
 }
+
+@media (max-width: 1023px) {
+  .notes__layout {
+    grid-template-columns: 1fr; 
+  }
+
+  .notes__form {
+    position: static;
+  }
+}
+
+@media (max-width: 767px) {
+  .notes__grid {
+    grid-template-columns: 1fr; 
+  }
+
+  .notes__header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-sm);
+  }
+
+  .notes__filter {
+    overflow-x: auto; 
+    flex-wrap: nowrap;
+  }
+}
+
+@media (min-width: 640px) and (max-width: 1023px) {
+  .notes__grid {
+    grid-template-columns: repeat(2, 1fr); 
+  }
+}
 </style>

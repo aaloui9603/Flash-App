@@ -57,4 +57,16 @@ function aktualisieren(id, frage, antwort, kategorie, ordner) {
   grid-template-columns: repeat(3, 1fr);
   gap: var(--spacing-lg);
 }
+
+@media (max-width: 639px) {
+  .card-list__grid {
+    grid-template-columns: 1fr; 
+  }
+}
+
+@media (min-width: 640px) and (max-width: 1023px) {
+  .card-list__grid {
+    grid-template-columns: repeat(2, 1fr); 
+  }
+}
 </style>

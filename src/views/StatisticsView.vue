@@ -303,4 +303,15 @@ const notizenGesamt = computed(() => notesStore.notes.length)
   color: var(--color-text-muted);
   text-align: center;
 }
+
+
+@media (max-width: 767px) {
+  .statistics__karten {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .statistics__titel {
+    font-size: var(--font-size-2xl);
+  }
+}
 </style>
