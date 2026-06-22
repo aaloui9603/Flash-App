@@ -14,7 +14,7 @@ Das besondere Merkmal: **BlueBooster**, ein integrierter KI-Lernassistent auf Ba
 
 ---
 
-## 🛠️ Tech-Stack
+## Tech-Stack
 
 | Technologie | Version | Verwendungszweck |
 |---|---|---|

@@ -4,17 +4,15 @@ import { supabase } from '../composables/useSupabase.js'
 
 export const useFlashcardStore = defineStore('flashcards', () => {
 
-  // --- State ---
+  // ── State ──────────────────────────────────────────────────────────────
   const flashcards = ref([])
-  const isLoading = ref(false)
-  const error = ref(null)
+  const isLoading  = ref(false)
+  const error      = ref(null)
 
-  // --- Actions ---
-
-  // Alle Flashcards laden
+  // ── Alle Flashcards laden ──────────────────────────────────────────────
   async function ladeFlashcards() {
     isLoading.value = true
-    error.value = null
+    error.value     = null
 
     const { data, error: sbError } = await supabase
       .from('flashcards')
@@ -23,6 +21,7 @@ export const useFlashcardStore = defineStore('flashcards', () => {
 
     if (sbError) {
       error.value = sbError.message
+      console.error('ladeFlashcards Fehler:', sbError.message)
     } else {
       flashcards.value = data
     }
@@ -30,21 +29,25 @@ export const useFlashcardStore = defineStore('flashcards', () => {
     isLoading.value = false
   }
 
-  // Neue Flashcard hinzufügen
-  async function flashcardHinzufuegen(frage, antwort, kategorie) {
+  // ── Neue Flashcard hinzufügen ──────────────────────────────────────────
+  // ordner = ausgewählte Ordnerfarbe (z.B. '#00CED1') oder null
+  async function flashcardHinzufuegen(frage, antwort, kategorie, ordner) {
     const { data, error: sbError } = await supabase
       .from('flashcards')
-      .insert([{ frage, antwort, kategorie }])
+      .insert([{ frage, antwort, kategorie, ordner }])
       .select()
 
     if (sbError) {
       error.value = sbError.message
+      console.error('flashcardHinzufuegen Fehler:', sbError.message)
+      return false
     } else {
       flashcards.value.unshift(data[0])
+      return true
     }
   }
 
-  // Flashcard löschen
+  // ── Flashcard löschen ──────────────────────────────────────────────────
   async function flashcardLoeschen(id) {
     const { error: sbError } = await supabase
       .from('flashcards')
@@ -53,12 +56,13 @@ export const useFlashcardStore = defineStore('flashcards', () => {
 
     if (sbError) {
       error.value = sbError.message
+      console.error('flashcardLoeschen Fehler:', sbError.message)
     } else {
       flashcards.value = flashcards.value.filter(f => f.id !== id)
     }
   }
 
-  // Flashcard als gelernt markieren
+  // ── Flashcard als gelernt markieren ───────────────────────────────────
   async function gelerntMarkieren(id, gelernt) {
     const { error: sbError } = await supabase
       .from('flashcards')
@@ -67,6 +71,7 @@ export const useFlashcardStore = defineStore('flashcards', () => {
 
     if (sbError) {
       error.value = sbError.message
+      console.error('gelerntMarkieren Fehler:', sbError.message)
     } else {
       const karte = flashcards.value.find(f => f.id === id)
       if (karte) karte.gelernt = gelernt

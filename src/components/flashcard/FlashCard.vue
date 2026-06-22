@@ -2,10 +2,10 @@
 import { ref } from 'vue'
 
 const props = defineProps({
-    flashcard: {
-        type: Object,
-        required: true
-    }
+  flashcard: {
+    type: Object,
+    required: true
+  }
 })
 
 const emit = defineEmits(['gelernt-toggle', 'loeschen'])
@@ -13,56 +13,80 @@ const emit = defineEmits(['gelernt-toggle', 'loeschen'])
 const istUmgedreht = ref(false)
 
 function umdrehen() {
-    istUmgedreht.value = !istUmgedreht.value
+  istUmgedreht.value = !istUmgedreht.value
 }
 
 function gelerntToggle() {
-    emit('gelernt-toggle', props.flashcard.id, !props.flashcard.gelernt)
+  emit('gelernt-toggle', props.flashcard.id, !props.flashcard.gelernt)
 }
 
 function loeschen() {
-    emit('loeschen', props.flashcard.id)
+  emit('loeschen', props.flashcard.id)
 }
-
 </script>
+
 <template>
-    <div class="card-wrapper" @click="umdrehen">
+  <div class="card-wrapper" @click="umdrehen">
 
-        <div class="card" :class="{ 'card--flipped': istUmgedreht }">
-            <div class="card__front glass--card">
-                <span class="card__badge">Frage</span>
-                <p class="card__text">{{ flashcard.frage }}</p>
-                <span class="card__kategorie">{{ flashcard.kategorie }}</span>
-            </div>
+    <!-- Ordner-Farbindikator oben auf der Karte -->
+    <div
+      v-if="flashcard.ordner"
+      class="card__ordner-indikator"
+      :style="{ backgroundColor: flashcard.ordner }"
+    />
 
-            <!--Rückseite-->
-            <div class="card__back glass--card">
-                <span class="card__badge card__badge--back">Antwort</span>
-                <p class="card__text">{{ flashcard.antwort }}</p>
+    <div class="card" :class="{ 'card--umgedreht': istUmgedreht }">
 
-                <div class="card__actions" @click.stop>
-                    <button
-                    class="card__btn neu-button"
-                    :class="{ 'card__btn--gelernt': flashcard.gelernt}"
-                    @click="gelerntToggle"
-                    >
-                      {{ flashcard.gelernt ? '✅ Gelernt' : '⬜ Noch nicht' }}
-                </button>
-                <button class="card__btn card__btn--delete neu-button" @click="loeschen">
-                    🗑️ Löschen
-                </button>
-                </div>
-            </div>
+      <!-- Vorderseite -->
+      <div class="card__vorderseite glass--card">
+        <span class="card__badge">Frage</span>
+        <p class="card__text">{{ flashcard.frage }}</p>
+        <span class="card__kategorie">{{ flashcard.kategorie }}</span>
+      </div>
+
+      <!-- Rückseite -->
+      <div class="card__rueckseite glass--card">
+        <span class="card__badge card__badge--rueck">Antwort</span>
+        <p class="card__text">{{ flashcard.antwort }}</p>
+
+        <div class="card__aktionen" @click.stop>
+          <button
+            class="card__btn neu-button"
+            :class="{ 'card__btn--gelernt': flashcard.gelernt }"
+            @click="gelerntToggle"
+          >
+            {{ flashcard.gelernt ? '✅ Gelernt' : '⬜ Noch nicht' }}
+          </button>
+          <button
+            class="card__btn card__btn--loeschen neu-button"
+            @click="loeschen"
+          >
+            🗑️ Löschen
+          </button>
         </div>
+      </div>
+
     </div>
+  </div>
 </template>
 
 <style scoped>
-
 .card-wrapper {
+  position: relative;
   perspective: var(--card-perspective);
   cursor: pointer;
   height: var(--card-height);
+}
+
+/* Farbiger Balken oben — zeigt den Ordner an */
+.card__ordner-indikator {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  z-index: 1;
 }
 
 .card {
@@ -73,12 +97,12 @@ function loeschen() {
   transition: var(--transition-flip);
 }
 
-.card--flipped {
+.card--umgedreht {
   transform: rotateY(180deg);
 }
 
-.card__front,
-.card__back {
+.card__vorderseite,
+.card__rueckseite {
   position: absolute;
   width: 100%;
   height: 100%;
@@ -92,7 +116,7 @@ function loeschen() {
   padding: var(--spacing-lg);
 }
 
-.card__back {
+.card__rueckseite {
   transform: rotateY(180deg);
 }
 
@@ -104,7 +128,7 @@ function loeschen() {
   letter-spacing: var(--letter-spacing-wide);
 }
 
-.card__badge--back {
+.card__badge--rueck {
   color: var(--color-secondary);
 }
 
@@ -120,7 +144,7 @@ function loeschen() {
   color: var(--color-text-muted);
 }
 
-.card__actions {
+.card__aktionen {
   display: flex;
   gap: var(--spacing-sm);
   margin-top: var(--spacing-sm);
@@ -137,7 +161,7 @@ function loeschen() {
   color: var(--color-success);
 }
 
-.card__btn--delete {
+.card__btn--loeschen {
   color: var(--color-error);
 }
 </style>
