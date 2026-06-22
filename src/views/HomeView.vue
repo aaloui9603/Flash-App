@@ -5,6 +5,12 @@ import { useFlashcardStore } from '../stores/flashCardStore'
 import { useNotesStore } from '../stores/notesStore'
 import { useQuestionStore } from '../stores/questionStore'
 
+// ── Swiper Vue-Komponenten & Module ───────────────────────────────────
+import { Swiper, SwiperSlide } from 'swiper/vue'
+import { Autoplay, Pagination } from 'swiper/modules'
+import 'swiper/css'
+import 'swiper/css/pagination'
+
 const flashCardStore = useFlashcardStore()
 const notesStore     = useNotesStore()
 const questionStore  = useQuestionStore()
@@ -18,6 +24,43 @@ onMounted(async () => {
 const gelerntAnzahl = computed(() =>
   flashCardStore.flashcards.filter(f => f.gelernt).length
 )
+
+// ── Swiper-Konfiguration ───────────────────────────────────────────────
+const swiperModule = [Autoplay, Pagination]
+
+// ── Feature-Slides (kein Hardcode — Daten als Array) ──────────────────
+const featureSlides = [
+  {
+    icon:        '🃏',
+    titel:       'Glasskarten',
+    beschreibung: 'Erstelle Lernkarten mit automatischer Flip-Animation. Vorderseite zeigt die Frage — Rückseite die Antwort.',
+    farbe:       '#00CED1',
+  },
+  {
+    icon:        '❓',
+    titel:       'Tägliche Fragen',
+    beschreibung: 'Bis zu 20 zufällige Fragen täglich — direkt aus deinem persönlichen Fragenkatalog.',
+    farbe:       '#B452CD',
+  },
+  {
+    icon:        '📝',
+    titel:       'Digitale Notizen',
+    beschreibung: 'Erstelle und organisiere Notizen mit Rich-Text-Editor, Farb-Markierungen und Ordner-System.',
+    farbe:       '#66CDAA',
+  },
+  {
+    icon:        '🤖',
+    titel:       'BlueBooster',
+    beschreibung: 'Dein persönlicher KI-Assistent hilft dir beim Lernen — DSGVO-konform und immer verfügbar.',
+    farbe:       '#006994',
+  },
+  {
+    icon:        '📊',
+    titel:       'Statistiken',
+    beschreibung: 'Verfolge deinen Lernfortschritt mit detaillierten Erledigungs- und Beantwortungsquoten.',
+    farbe:       '#D02090',
+  },
+]
 </script>
 
 <template>
@@ -32,6 +75,47 @@ const gelerntAnzahl = computed(() =>
       <p class="home__untertitel">
         Lerne smarter und effektiver — nicht härter.
       </p>
+    </section>
+
+    <!-- Feature-Slider (A-4) -->
+    <section class="home__slider-bereich">
+      <h2 class="home__abschnitt-titel">Features</h2>
+
+      <Swiper
+        class="home__swiper"
+        :modules="swiperModule"
+        :slides-per-view="1"
+        :space-between="24"
+        :breakpoints="{
+          640:  { slidesPerView: 2 },
+          1024: { slidesPerView: 3 },
+        }"
+        :autoplay="{ delay: 3000, disableOnInteraction: false }"
+        :pagination="{ clickable: true }"
+        loop
+      >
+        <SwiperSlide
+          v-for="(slide, index) in featureSlides"
+          :key="index"
+          class="home__slide"
+        >
+          <div
+            class="home__slide-karte glass--card"
+            :style="{ borderTopColor: slide.farbe }"
+          >
+            <span class="home__slide-icon">{{ slide.icon }}</span>
+            <h3
+              class="home__slide-titel"
+              :style="{ color: slide.farbe }"
+            >
+              {{ slide.titel }}
+            </h3>
+            <p class="home__slide-beschreibung">
+              {{ slide.beschreibung }}
+            </p>
+          </div>
+        </SwiperSlide>
+      </Swiper>
     </section>
 
     <!-- Statistik-Karten -->
@@ -96,13 +180,13 @@ const gelerntAnzahl = computed(() =>
   gap: var(--spacing-xl);
 }
 
+/* ── Hero ─────────────────────────────────────────────────────────────── */
 .home__hero {
   padding: var(--spacing-2xl);
   text-align: center;
   border-radius: var(--radius-lg);
 }
 
-/* Korrektur: font-weight: 700 → var(--font-weight-bold) */
 .home__titel {
   font-size: var(--font-size-4xl);
   font-weight: var(--font-weight-bold);
@@ -119,6 +203,51 @@ const gelerntAnzahl = computed(() =>
   font-size: var(--font-size-lg);
 }
 
+/* ── Feature-Slider ───────────────────────────────────────────────────── */
+.home__abschnitt-titel {
+  color: var(--color-text);
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-semibold);
+  margin-bottom: var(--spacing-md);
+}
+
+.home__swiper {
+  width: 100%;
+  padding-bottom: var(--spacing-xl); /* Platz für Pagination-Punkte */
+}
+
+.home__slide {
+  height: auto;
+}
+
+.home__slide-karte {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-md);
+  padding: var(--spacing-xl);
+  border-radius: var(--radius-lg);
+  border-top: 3px solid transparent; /* Farbe kommt per :style */
+  text-align: center;
+  height: 100%;
+}
+
+.home__slide-icon {
+  font-size: var(--font-size-4xl);
+}
+
+.home__slide-titel {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+}
+
+.home__slide-beschreibung {
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+  line-height: 1.6;
+}
+
+/* ── Statistik ────────────────────────────────────────────────────────── */
 .home__statistik {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -138,7 +267,6 @@ const gelerntAnzahl = computed(() =>
   font-size: var(--font-size-3xl);
 }
 
-/* Korrektur: font-weight: 700 → var(--font-weight-bold) */
 .home__statistik-zahl {
   font-size: var(--font-size-3xl);
   font-weight: var(--font-weight-bold);
@@ -150,14 +278,7 @@ const gelerntAnzahl = computed(() =>
   font-size: var(--font-size-sm);
 }
 
-/* Korrektur: font-weight: 600 → var(--font-weight-semibold) */
-.home__abschnitt-titel {
-  color: var(--color-text);
-  font-size: var(--font-size-2xl);
-  font-weight: var(--font-weight-semibold);
-  margin-bottom: var(--spacing-md);
-}
-
+/* ── Schnellzugriff ───────────────────────────────────────────────────── */
 .home__schnellzugriff-links {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -177,7 +298,6 @@ const gelerntAnzahl = computed(() =>
 .home__schnellzugriff-icon {
   font-size: var(--font-size-4xl);
 }
-
 
 .home__schnellzugriff-label {
   color: var(--color-text);
