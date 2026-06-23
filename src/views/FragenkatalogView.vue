@@ -28,23 +28,28 @@ const gestellteFragen     = ref([])
 
 let frageZaehler = 0
 
-// ── Themen-Liste für zufälligen Einstieg ──────────────────────────────────
+// ── 20 Themen-Kategorien ──────────────────────────────────────────────────
 const THEMEN = [
   'Vue 3 Composition API',
   'JavaScript Arrays und Methoden',
   'CSS Flexbox',
   'CSS Grid',
-  'Supabase CRUD',
-  'Git Workflow',
-  'Vite Build-Tool',
+  'Supabase CRUD und Datenbankoperationen',
+  'Git Workflow und Versionskontrolle',
+  'Vite Build-Tool und Projektkonfiguration',
   'Pinia State Management',
-  'SCSS Variablen',
-  'Vue Router',
+  'SCSS Variablen und Mixins',
+  'Vue Router und Navigation',
   'TypeScript Grundlagen',
-  'HTML Semantik',
-  'REST API',
-  'Async/Await',
-  'Vue Lifecycle Hooks'
+  'HTML Semantik und Barrierefreiheit',
+  'REST API Design und Prinzipien',
+  'Async/Await und Promises',
+  'Vue Lifecycle Hooks',
+  'JavaScript ES6+ Funktionen',
+  'Responsive Design und Media Queries',
+  'Vue Props, Emits und Komponenten-Kommunikation',
+  'Datenbankdesign und SQL-Grundlagen',
+  'HTTP-Methoden und Statuscodes',
 ]
 
 // ── Hilfsfunktion: HTML → Plaintext ───────────────────────────────────────
@@ -141,7 +146,6 @@ async function handleValidate() {
 }
 
 // ── Frage in Supabase speichern ────────────────────────────────────────────
-// Korrektur: frageHinzufuegen statt antwortSpeichern (existiert nicht im Store)
 async function speichern() {
   if (!aktuelleFrageText.value || !aktuelleFrageMuster.value) return
 
@@ -236,7 +240,7 @@ neueFrage()
 
     </div>
 
-    <!-- Musterantwort (nach 3 Fehlversuchen) -->
+    <!-- Musterantwort nach 3 Fehlversuchen -->
     <div
       v-if="validationStatus[aktuelleFrageId] === 'revealed'"
       class="katalog__muster glass"

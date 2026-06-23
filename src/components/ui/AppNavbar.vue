@@ -8,8 +8,8 @@ const isDark     = useDark()
 const toggleDark = useToggle(isDark)
 
 // ── Burger-Menü ────────────────────────────────────────────────────────
-const menuOffen    = ref(false)
-const burgerRef    = ref(null) // Referenz auf das Burger-Dropdown-Element
+const menuOffen = ref(false)
+const burgerRef = ref(null)
 
 function menuToggle() {
   menuOffen.value = !menuOffen.value
@@ -22,8 +22,8 @@ onClickOutside(burgerRef, () => {
 
 // ── Burger-Links ───────────────────────────────────────────────────────
 const burgerLinks = [
-  { pfad: '/questions',        label: '❓ Tagesfrage'      },
-  { pfad: '/statistics',       label: '📊 Statistik'       },
+  { pfad: '/questions',         label: '❓ Tagesfrage'       },
+  { pfad: '/statistics',        label: '📊 Statistik'        },
   { pfad: '/fragen-bibliothek', label: '🗂️ Fragen-Bibliothek' },
 ]
 </script>
@@ -94,20 +94,20 @@ const burgerLinks = [
         {{ isDark ? '☀️' : '🌙' }}
       </button>
 
-      <!-- Burger-Bereich (Button + Dropdown zusammen) -->
+      <!-- Burger-Bereich -->
       <div ref="burgerRef" class="navbar__burger-bereich">
 
         <button
           class="navbar__burger neu-button"
           :class="{ 'navbar__burger--aktiv': menuOffen }"
-          @click="menuToggle"
           aria-label="Menü öffnen"
+          @click="menuToggle"
         >
           {{ menuOffen ? '✕' : '☰' }}
         </button>
 
-        <!-- Dropdown -->
-        <div v-show="menuOffen" class="navbar__dropdown glass">
+        <!-- Dropdown — v-if statt v-show: komplett aus DOM entfernt wenn geschlossen -->
+        <div v-if="menuOffen" class="navbar__dropdown glass">
           <RouterLink
             v-for="link in burgerLinks"
             :key="link.pfad"
@@ -215,7 +215,6 @@ const burgerLinks = [
   background: var(--glass-bg-strong);
 }
 
-/* ── Burger-Bereich ───────────────────────────────────────────────────── */
 .navbar__burger-bereich {
   position: relative;
 }
@@ -247,13 +246,13 @@ const burgerLinks = [
   position: absolute;
   top: calc(100% + var(--spacing-sm));
   right: 0;
-  min-width: 200px;
+  min-width: 220px;
   border-radius: var(--radius-md);
   padding: var(--spacing-sm);
   display: flex;
   flex-direction: column;
   gap: var(--spacing-xs);
-  z-index: var(--z-dropdown, 200);
+  z-index: var(--z-tooltip);
 }
 
 .navbar__dropdown-link {
@@ -276,9 +275,10 @@ const burgerLinks = [
   background: var(--glass-bg-strong);
 }
 
+
 @media (max-width: 767px) {
   .navbar__links {
-    display:none;
+    display: none;
   }
 
   .navbar {

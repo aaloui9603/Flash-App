@@ -1,50 +1,52 @@
 @use './variables' as *;
 
-// Glassmorphismus
+// ── Glassmorphismus ────────────────────────────────────────────────────────
 .glass {
-    background: var(--glass-bg); 
-    backdrop-filter: $glass-blur; 
-    -webkit-backdrop-filter: $glass-blur; 
-    border: $glass-border;
-    box-shadow: var(--glass-shadow);
-    border-radius: $radius-md;
+  background: var(--glass-bg);
+  backdrop-filter: $glass-blur;
+  -webkit-backdrop-filter: $glass-blur;
+  border: $glass-border;
+  box-shadow: var(--glass-shadow);
+  border-radius: $radius-md;
 }
 
 .glass-strong {
-    background: var(--glass-bg-strong); 
-    backdrop-filter: $glass-blur-strong; 
-    -webkit-backdrop-filter: $glass-blur-strong; 
-    border: $glass-border-strong; 
-    box-shadow: var(--glass-shadow); 
-    border-radius: $radius-md; 
+  background: var(--glass-bg-strong);
+  backdrop-filter: $glass-blur-strong;
+  -webkit-backdrop-filter: $glass-blur-strong;
+  border: $glass-border-strong;
+  box-shadow: var(--glass-shadow);
+  border-radius: $radius-md;
 }
 
-.glass-card {
-    background: var(--glass-bg); 
-    backdrop-filter: $glass-blur; 
-    -webkit-backdrop-filter: $glass-blur; 
-    border: $glass-border; 
-    box-shadow: $shadow-card; 
-    border-radius: $radius-lg; 
-    transition: $transition-base;
+// glass-card UND glass--card funktionieren beide — Alias für Konsistenz
+.glass-card,
+.glass--card {
+  background: var(--glass-bg);
+  backdrop-filter: $glass-blur;
+  -webkit-backdrop-filter: $glass-blur;
+  border: $glass-border;
+  box-shadow: $shadow-card;
+  border-radius: $radius-lg;
+  transition: $transition-base;
 
-    &:hover {
-        background: var(--glass-bg-strong);
-        box-shadow: var(--glass-shadow); 
-        transform: translateY(-2px);
-    }
+  &:hover {
+    background: var(--glass-bg-strong);
+    box-shadow: var(--glass-shadow);
+    transform: translateY(-2px);
+  }
 }
 
 .neu-button {
-    background: var(--neu-bg); 
-    box-shadow: var(--neu-shadow); 
-    border: none; 
-    border-radius: $radius-md; 
-    transition: $transition-base; 
-    cursor: pointer; 
+  background: var(--neu-bg);
+  box-shadow: var(--neu-shadow);
+  border: none;
+  border-radius: $radius-md;
+  transition: $transition-base;
+  cursor: pointer;
 
-    &:active {
-        box-shadow: $neu-shadow-active; 
-        transform: scale(0.97);
-    }
+  &:active {
+    box-shadow: $neu-shadow-active;
+    transform: scale(0.97);
+  }
 }

@@ -19,6 +19,8 @@ import BlueBooster from './components/chatbot/BlueBooster.vue'
 <style scoped>
 .app-wrapper {
   min-height: 100vh;
+  display: flex;
+  flex-direction: column;
   background-color: var(--color-bg);
   color: var(--color-text);
   transition: var(--transition-base);

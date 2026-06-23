@@ -11,16 +11,16 @@ const props = defineProps({
 const emit = defineEmits(['gelernt-toggle', 'loeschen', 'aktualisieren'])
 
 // ── Flip-Logik ─────────────────────────────────────────────────────────
-const istUmgedreht   = ref(false)
+const istUmgedreht     = ref(false)
 const bearbeitungAktiv = ref(false)
 
-// ── Edit-Felder (werden beim Start befüllt) ────────────────────────────
+// ── Edit-Felder ────────────────────────────────────────────────────────
 const bearbeitungFrage     = ref('')
 const bearbeitungAntwort   = ref('')
 const bearbeitungKategorie = ref('')
 const bearbeitungOrdner    = ref(null)
 
-// ── Ordner-Farbpalette (identisch zu FlashCardForm) ───────────────────
+// ── Ordner-Farbpalette ─────────────────────────────────────────────────
 const ordnerFarben = [
   { name: 'Cyan',        wert: '#00CED1' },
   { name: 'Meerblau',    wert: '#006994' },
@@ -33,17 +33,16 @@ const ordnerFarben = [
 ]
 
 function umdrehen() {
-  if (bearbeitungAktiv.value) return // Kein Flip im Edit-Modus
+  if (bearbeitungAktiv.value) return
   istUmgedreht.value = !istUmgedreht.value
 }
 
 function bearbeitungStarten() {
-  // Aktuelle Werte in die Edit-Felder laden
   bearbeitungFrage.value     = props.flashcard.frage
   bearbeitungAntwort.value   = props.flashcard.antwort
   bearbeitungKategorie.value = props.flashcard.kategorie || ''
   bearbeitungOrdner.value    = props.flashcard.ordner || null
-  istUmgedreht.value         = false // Karte zurückdrehen
+  istUmgedreht.value         = false
   bearbeitungAktiv.value     = true
 }
 
@@ -75,48 +74,38 @@ function loeschen() {
 </script>
 
 <template>
-  <div class="card-wrapper" :class="{ 'card-wrapper--bearbeitung': bearbeitungAktiv }" @click="umdrehen">
-
-    <!-- Ordner-Farbindikator (nur wenn kein Edit-Modus) -->
+  <div
+    class="card-wrapper"
+    :class="{ 'card-wrapper--bearbeitung': bearbeitungAktiv }"
+    @click="umdrehen"
+  >
+    <!-- Ordner-Farbindikator -->
     <div
       v-if="flashcard.ordner && !bearbeitungAktiv"
       class="card__ordner-indikator"
       :style="{ backgroundColor: flashcard.ordner }"
     />
 
-    <!-- Edit-Modus: Inline-Formular -->
+    <!-- Edit-Modus -->
     <div v-if="bearbeitungAktiv" class="card__bearbeitung glass--card" @click.stop>
 
       <h3 class="card__bearbeitung-titel">✏️ Bearbeiten</h3>
 
       <div class="card__bearbeitung-gruppe">
         <label class="card__bearbeitung-label">Frage</label>
-        <textarea
-          v-model="bearbeitungFrage"
-          class="card__bearbeitung-eingabe"
-          rows="2"
-        />
+        <textarea v-model="bearbeitungFrage" class="card__bearbeitung-eingabe" rows="2" />
       </div>
 
       <div class="card__bearbeitung-gruppe">
         <label class="card__bearbeitung-label">Antwort</label>
-        <textarea
-          v-model="bearbeitungAntwort"
-          class="card__bearbeitung-eingabe"
-          rows="2"
-        />
+        <textarea v-model="bearbeitungAntwort" class="card__bearbeitung-eingabe" rows="2" />
       </div>
 
       <div class="card__bearbeitung-gruppe">
         <label class="card__bearbeitung-label">Kategorie</label>
-        <input
-          v-model="bearbeitungKategorie"
-          class="card__bearbeitung-eingabe"
-          type="text"
-        />
+        <input v-model="bearbeitungKategorie" class="card__bearbeitung-eingabe" type="text" />
       </div>
 
-      <!-- Ordner-Auswahl -->
       <div class="card__bearbeitung-gruppe">
         <label class="card__bearbeitung-label">Ordner</label>
         <div class="card__bearbeitung-farben">
@@ -139,7 +128,6 @@ function loeschen() {
         </div>
       </div>
 
-      <!-- Aktionen -->
       <div class="card__bearbeitung-aktionen">
         <button
           class="card__bearbeitung-btn card__bearbeitung-btn--speichern neu-button"
@@ -158,17 +146,15 @@ function loeschen() {
 
     </div>
 
-    <!-- Normale Karte (wenn kein Edit-Modus) -->
+    <!-- Normale Karte -->
     <div v-else class="card" :class="{ 'card--umgedreht': istUmgedreht }">
 
-      <!-- Vorderseite -->
       <div class="card__vorderseite glass--card">
         <span class="card__badge">Frage</span>
         <p class="card__text">{{ flashcard.frage }}</p>
         <span class="card__kategorie">{{ flashcard.kategorie }}</span>
       </div>
 
-      <!-- Rückseite -->
       <div class="card__rueckseite glass--card">
         <span class="card__badge card__badge--rueck">Antwort</span>
         <p class="card__text">{{ flashcard.antwort }}</p>
@@ -208,7 +194,6 @@ function loeschen() {
   height: var(--card-height);
 }
 
-/* Ordner-Farbbalken oben */
 .card__ordner-indikator {
   position: absolute;
   top: 0;
@@ -219,7 +204,6 @@ function loeschen() {
   z-index: 1;
 }
 
-/* Flip-Karte */
 .card {
   width: 100%;
   height: 100%;
@@ -228,9 +212,7 @@ function loeschen() {
   transition: var(--transition-flip);
 }
 
-.card--umgedreht {
-  transform: rotateY(180deg);
-}
+.card--umgedreht { transform: rotateY(180deg); }
 
 .card__vorderseite,
 .card__rueckseite {
@@ -247,7 +229,14 @@ function loeschen() {
   padding: var(--spacing-lg);
 }
 
-.card__rueckseite {
+.card__rueckseite { transform: rotateY(180deg); }
+
+/* Hover-Transform von glass--card deaktivieren — sonst springt die Karte */
+.card__vorderseite:hover {
+  transform: none;
+}
+
+.card__rueckseite:hover {
   transform: rotateY(180deg);
 }
 
@@ -259,9 +248,7 @@ function loeschen() {
   letter-spacing: var(--letter-spacing-wide);
 }
 
-.card__badge--rueck {
-  color: var(--color-secondary);
-}
+.card__badge--rueck { color: var(--color-secondary); }
 
 .card__text {
   font-size: var(--font-size-lg);
@@ -340,7 +327,6 @@ function loeschen() {
   border-color: var(--color-primary);
 }
 
-/* Ordner-Farben im Edit-Modus */
 .card__bearbeitung-farben {
   display: flex;
   flex-wrap: wrap;
@@ -371,7 +357,6 @@ function loeschen() {
   outline-offset: 2px;
 }
 
-/* Speichern / Abbrechen */
 .card__bearbeitung-aktionen {
   display: flex;
   gap: var(--spacing-sm);
@@ -384,21 +369,17 @@ function loeschen() {
   border-radius: var(--radius-sm);
 }
 
-.card__bearbeitung-btn--speichern {
-  color: var(--color-primary);
-}
+.card__bearbeitung-btn--speichern { color: var(--color-primary); }
 
 .card__bearbeitung-btn--speichern:disabled {
   opacity: var(--opacity-disabled);
   cursor: not-allowed;
 }
 
-.card__bearbeitung-btn--abbrechen {
-  color: var(--color-error);
-}
+.card__bearbeitung-btn--abbrechen { color: var(--color-error); }
 
 .card-wrapper--bearbeitung {
-  height: auto; 
-  cursor: default; 
+  height: auto;
+  cursor: default;
 }
 </style>
