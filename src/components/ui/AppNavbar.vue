@@ -282,7 +282,7 @@ const burgerLinks = [
   }
 
   .navbar {
-    padding: var(--spacing-sm var(--spacing-md);)
+    padding: var(--spacing-sm) var(--spacing-md);
   }
 }
 </style>
